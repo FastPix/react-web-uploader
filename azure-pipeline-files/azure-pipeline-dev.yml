@@ -17,24 +17,6 @@ steps:
   - checkout: self
     fetchDepth: 0
 
-  - task: NodeTool@0
-    displayName: 'Use Node.js 20'
-    inputs:
-      versionSpec: '20.x'
-
-  - script: |
-      node --version
-      npm --version
-
-      if [ -f package-lock.json ]; then
-        echo "Using npm ci"
-        npm ci
-      else
-        echo "Using npm install"
-        npm install
-      fi
-    displayName: 'Install Dependencies'
-
   - task: SonarCloudPrepare@3
     displayName: 'Prepare SonarCloud Analysis'
     inputs:
@@ -51,10 +33,6 @@ steps:
         sonar.projectName=React-uploader-sdk
         sonar.sources=.
         sonar.sourceEncoding=UTF-8
-
-  - script: |
-      npm run build --if-present
-    displayName: 'Build Project'
 
   - task: SonarCloudAnalyze@3
     displayName: 'Run SonarCloud Analysis'
