@@ -1,54 +1,43 @@
 trigger:
-branches:
-include:
-- main
-- feature/*
+  branches:
+    include:
+      - main
+      - feature/*
 
 pr:
-branches:
-include:
-- main
-- feature/*
+  branches:
+    include:
+      - main
+      - feature/*
 
 pool:
-vmImage: 'ubuntu-latest'
+  vmImage: 'ubuntu-latest'
 
-stages:
+steps:
+  - checkout: self
+    fetchDepth: 0
 
-* stage: SonarCloudAnalysis
-  displayName: SonarCloud Analysis Stage
-
-  jobs:
-
-  * job: Analyze
-    displayName: Run SonarCloud Analysis
-
-    steps:
-
-    * checkout: self
-      fetchDepth: 0
-
-    * task: NodeTool@0
-      displayName: 'Use Node.js 20'
-      inputs:
+  - task: NodeTool@0
+    displayName: 'Use Node.js 20'
+    inputs:
       versionSpec: '20.x'
 
-    * script: |
+  - script: |
       node --version
       npm --version
 
       if [ -f package-lock.json ]; then
-      echo "package-lock.json found. Running npm ci..."
-      npm ci
+        echo "Using npm ci"
+        npm ci
       else
-      echo "package-lock.json not found. Running npm install..."
-      npm install
+        echo "Using npm install"
+        npm install
       fi
-      displayName: 'Install Dependencies'
+    displayName: 'Install Dependencies'
 
-    * task: SonarCloudPrepare@3
-      displayName: 'Prepare SonarCloud Analysis'
-      inputs:
+  - task: SonarCloudPrepare@3
+    displayName: 'Prepare SonarCloud Analysis'
+    inputs:
       SonarCloud: 'sdk_sonar'
       organization: 'fastpix'
       scannerMode: 'CLI'
@@ -57,25 +46,20 @@ stages:
       cliProjectName: 'React-uploader-sdk'
       cliSources: '.'
       extraProperties: |
-      sonar.projectKey=FastPix_React-uploader-sdk
-      sonar.organization=fastpix
-      sonar.projectName=React-uploader-sdk
-      sonar.sources=.
-      sonar.sourceEncoding=UTF-8
+        sonar.projectKey=FastPix_React-uploader-sdk
+        sonar.organization=fastpix
+        sonar.projectName=React-uploader-sdk
+        sonar.sources=.
+        sonar.sourceEncoding=UTF-8
 
-    * script: |
-      if npm run | grep -q "build"; then
-      echo "Build script found. Running build..."
-      npm run build
-      else
-      echo "No build script found. Skipping build."
-      fi
-      displayName: 'Build Project'
+  - script: |
+      npm run build --if-present
+    displayName: 'Build Project'
 
-    * task: SonarCloudAnalyze@3
-      displayName: 'Run SonarCloud Code Analysis'
+  - task: SonarCloudAnalyze@3
+    displayName: 'Run SonarCloud Analysis'
 
-    * task: SonarCloudPublish@3
-      displayName: 'Publish Quality Gate Result'
-      inputs:
+  - task: SonarCloudPublish@3
+    displayName: 'Publish Quality Gate Result'
+    inputs:
       pollingTimeoutSec: '300'
