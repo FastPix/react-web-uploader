@@ -1,0 +1,181 @@
+.fpx-uploader {
+  /* ---- globals ---- */
+  --fpx-accent-color: #ff5b1a;
+  --fpx-bg: transparent;
+  --fpx-surface: #ffffff;
+  --fpx-text-color: #e5e5e5;
+  --fpx-text-muted: #8a8a8a;
+  --fpx-border-color: #333;
+  --fpx-border-color-hover: #555;
+  --fpx-radius: 8px;
+  --fpx-font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  --fpx-error-color: #ef4444;
+  --fpx-success-color: #22c55e;
+  --fpx-focus-ring: color-mix(in srgb, var(--fpx-accent-color) 50%, transparent);
+  --fpx-gap: 1rem;
+  --fpx-padding: 2rem;
+  --fpx-size: 1;
+
+  /* ---- track ---- */
+  --fpx-track-height: 8px;
+  --fpx-track-bg: #222;
+  --fpx-track-fill: var(--fpx-accent-color);
+  --fpx-track-radius: 999px;
+  --fpx-progress: 0%;
+
+  /* ---- dropzone ---- */
+  --fpx-dropzone-border: 2px dashed var(--fpx-border-color);
+  --fpx-dropzone-border-active: var(--fpx-accent-color);
+  --fpx-dropzone-bg: var(--fpx-surface);
+  --fpx-dropzone-bg-active: color-mix(in srgb, var(--fpx-accent-color) 6%, transparent);
+  --fpx-overlay-bg: rgba(0, 0, 0, 0.6);
+
+  /* ---- buttons ---- */
+  --fpx-button-bg: var(--fpx-accent-color);
+  --fpx-button-text: #fff;
+  --fpx-button-bg-hover: color-mix(in srgb, var(--fpx-accent-color) 88%, #000);
+  --fpx-button-radius: var(--fpx-radius);
+
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: var(--fpx-gap);
+  padding: var(--fpx-padding);
+  background: var(--fpx-bg);
+  color: var(--fpx-text-color);
+  font-family: var(--fpx-font-family);
+  font-size: calc(0.95rem * var(--fpx-size));
+  border-radius: var(--fpx-radius);
+}
+
+.fpx-uploader *,
+.fpx-uploader *::before,
+.fpx-uploader *::after { box-sizing: border-box; }
+
+.fpx-uploader[data-fpx-disabled] { opacity: 0.6; pointer-events: none; }
+
+/* size variants nudge spacing; --fpx-size scales type/controls via calc() */
+.fpx-uploader[data-fpx-size="sm"] { --fpx-padding: 1.25rem; --fpx-gap: 0.75rem; }
+.fpx-uploader[data-fpx-size="lg"] { --fpx-padding: 2.5rem;  --fpx-gap: 1.25rem; }
+
+/* ---------- file picker ---------- */
+.fpx-file-picker {
+  font: inherit;
+  color: var(--fpx-button-text);
+  background: var(--fpx-button-bg);
+  border: none;
+  border-radius: var(--fpx-button-radius);
+  padding: calc(0.5rem * var(--fpx-size)) calc(1rem * var(--fpx-size));
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+.fpx-file-picker:hover:not(:disabled) { background: var(--fpx-button-bg-hover); }
+.fpx-file-picker:disabled { cursor: not-allowed; opacity: 0.5; }
+.fpx-file-picker:focus-visible { outline: 3px solid var(--fpx-focus-ring); outline-offset: 2px; }
+
+/* ---------- dropzone ---------- */
+.fpx-dropzone {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: calc(0.75rem * var(--fpx-size));
+  padding: var(--fpx-padding);
+  border: var(--fpx-dropzone-border);
+  border-radius: var(--fpx-radius);
+  background: var(--fpx-dropzone-bg);
+  text-align: center;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+.fpx-dropzone[data-fpx-dragging] {
+  border-color: var(--fpx-dropzone-border-active);
+  background: var(--fpx-dropzone-bg-active);
+}
+.fpx-dropzone-overlay {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--fpx-overlay-bg);
+  pointer-events: none;
+}
+
+/* ---------- track (linear) ---------- */
+.fpx-track { display: flex; align-items: center; gap: 0.75rem; width: 100%; }
+.fpx-track-bar {
+  flex: 1;
+  height: var(--fpx-track-height);
+  background: var(--fpx-track-bg);
+  border-radius: var(--fpx-track-radius);
+  overflow: hidden;
+}
+.fpx-track-fill {
+  height: 100%;
+  width: var(--fpx-progress);
+  background: var(--fpx-track-fill);
+  border-radius: inherit;
+  transition: width 0.3s ease;
+}
+.fpx-track-label {
+  font-variant-numeric: tabular-nums;
+  color: var(--fpx-text-muted);
+  font-size: 0.85em;
+  min-width: 3ch;
+  text-align: right;
+}
+.fpx-uploader[data-fpx-state="error"]   .fpx-track-fill { background: var(--fpx-error-color); }
+.fpx-uploader[data-fpx-state="success"] .fpx-track-fill { background: var(--fpx-success-color); }
+
+/* ---------- track (radial) ---------- */
+.fpx-track-radial { position: relative; width: calc(72px * var(--fpx-size)); height: calc(72px * var(--fpx-size)); }
+.fpx-radial-svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+.fpx-radial-bg, .fpx-radial-fill { fill: none; stroke-width: 8; }
+.fpx-radial-bg { stroke: var(--fpx-track-bg); }
+.fpx-radial-fill {
+  stroke: var(--fpx-track-fill);
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.3s ease;
+}
+.fpx-track-radial .fpx-track-label {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+}
+
+/* ---------- status ---------- */
+.fpx-status { color: var(--fpx-text-muted); font-size: 0.9em; }
+.fpx-status[data-fpx-state="error"]   { color: var(--fpx-error-color); }
+.fpx-status[data-fpx-state="success"] { color: var(--fpx-success-color); }
+
+/* ---------- buttons ---------- */
+.fpx-button {
+  font: inherit;
+  color: var(--fpx-button-text);
+  background: var(--fpx-button-bg);
+  border: none;
+  border-radius: var(--fpx-button-radius);
+  padding: calc(0.5rem * var(--fpx-size)) calc(1.1rem * var(--fpx-size));
+  cursor: pointer;
+  transition: background 0.15s ease, opacity 0.15s ease;
+}
+.fpx-button:hover:not(:disabled) { background: var(--fpx-button-bg-hover); }
+.fpx-button:disabled { cursor: not-allowed; opacity: 0.45; }
+.fpx-button:focus-visible { outline: 3px solid var(--fpx-focus-ring); outline-offset: 2px; }
+
+/* abort = quieter, secondary */
+.fpx-abort-button {
+  background: transparent;
+  color: var(--fpx-text-muted);
+  border: 1px solid var(--fpx-border-color);
+}
+.fpx-abort-button:hover:not(:disabled) {
+  background: transparent;
+  border-color: var(--fpx-border-color-hover);
+  color: var(--fpx-text-color);
+}
+
+/* ---------- default layout ---------- */
+.fpx-default { display: flex; flex-direction: column; gap: var(--fpx-gap); }
+.fpx-default-progress,
+.fpx-default-error,
+.fpx-default-success { display: flex; flex-direction: column; gap: calc(0.75rem * var(--fpx-size)); }
+.fpx-controls { display: flex; gap: 0.5rem; }
