@@ -122,7 +122,9 @@ export function useUploader(props: FastPixUploaderProps): UploaderContextValue {
   }, [fileProp]);
 
   useEffect(() => {
-    if (autoStart && state.status === "ready") void start();
+    if (autoStart && state.status === "ready") {
+      start();
+    }
   }, [autoStart, state.status, start]);
 
   useEffect(() => {
