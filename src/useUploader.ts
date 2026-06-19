@@ -152,11 +152,22 @@ export function useUploader(props: FastPixUploaderProps): UploaderContextValue {
 
 // "video/*", ".mp4", "video/mp4", or comma-separated lists
 function matchesAccept(file: File, accept: string): boolean {
-  const tokens = accept.split(",").map((t) => t.trim()).filter(Boolean);
+  const tokens = accept.split(",").map((t) => t.trim().toLowerCase()).filter(Boolean);
   if (tokens.length === 0) return true;
+
+  const extensionToMimeFallback: Record<string, string> = {
+    '.mkv': 'video/x-matroska',
+    '.avi': 'video/x-msvideo',
+    '.mov': 'video/quicktime',
+  };
+
+  const fileName = file.name.toLowerCase();
+  const fileExt = fileName.substring(fileName.lastIndexOf('.'));
+  const fileType = file.type.toLowerCase() || extensionToMimeFallback[fileExt] || "";
+
   return tokens.some((t) => {
-    if (t.startsWith(".")) return file.name.toLowerCase().endsWith(t.toLowerCase());
-    if (t.endsWith("/*")) return file.type.startsWith(t.slice(0, -1));
-    return file.type === t;
+    if (t.startsWith(".")) return fileName.endsWith(t);
+    if (t.endsWith("/*")) return fileType.startsWith(t.slice(0, -1));
+    return fileType === t;
   });
 }

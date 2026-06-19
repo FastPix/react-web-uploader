@@ -74,8 +74,15 @@
 .fpx-file-picker:focus-visible { outline: 3px solid var(--fpx-focus-ring); outline-offset: 2px; }
 
 /* ---------- dropzone ---------- */
+.fpx-dropzone-wrapper { position: relative; }
 .fpx-dropzone {
-  position: relative;
+  /* button resets */
+  appearance: none;
+  width: 100%;
+  font: inherit;
+  color: var(--fpx-text-color);
+  cursor: pointer;
+  /* surface */
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -88,6 +95,8 @@
   text-align: center;
   transition: border-color 0.15s ease, background 0.15s ease;
 }
+.fpx-dropzone:disabled { cursor: not-allowed; opacity: 0.6; }
+.fpx-dropzone:focus-visible { outline: 3px solid var(--fpx-focus-ring); outline-offset: 2px; }
 .fpx-dropzone[data-fpx-dragging] {
   border-color: var(--fpx-dropzone-border-active);
   background: var(--fpx-dropzone-bg-active);
@@ -95,7 +104,7 @@
 .fpx-dropzone-overlay {
   position: absolute;
   inset: 0;
-  border-radius: inherit;
+  border-radius: var(--fpx-radius);
   background: var(--fpx-overlay-bg);
   pointer-events: none;
 }

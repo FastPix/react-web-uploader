@@ -4,9 +4,9 @@ import { useUploaderContext } from "../context";
 import type { UploaderState, UploaderError } from "../types";
 
 export interface FastPixStatusProps {
-  className?: string;
-  style?: CSSProperties;
-  labels?: Partial<Record<UploaderState, string>>;
+  readonly className?: string;
+  readonly style?: CSSProperties;
+  readonly labels?: Partial<Record<UploaderState, string>>;
 }
 
 export function FastPixStatus({ className, style, labels }: FastPixStatusProps) {

@@ -1,11 +1,11 @@
 import type { UploaderState, UploaderError } from "./types";
 
 export interface InternalState {
-  status: UploaderState;
-  file: File | null;
-  progress: number;
-  error: UploaderError | null;
-  isOffline: boolean;
+  readonly status: UploaderState;
+  readonly file: File | null;
+  readonly progress: number;
+  readonly error: UploaderError | null;
+  readonly isOffline: boolean;
 }
 
 export const initialState: InternalState = {
@@ -29,52 +29,36 @@ export type Action =
   | { type: "OFFLINE" }
   | { type: "ONLINE" };
 
-const ACTIVE: UploaderState[] = ["resolving", "uploading", "paused"];
+const ACTIVE = new Set<UploaderState>(["resolving", "uploading", "paused"]);
+
+function isAllowed(state: InternalState, action: Action): boolean {
+  switch (action.type) {
+    case "RESOLVE":      return (state.status === "ready" || state.status === "error") && !!state.file;
+    case "UPLOAD_START": return state.status === "resolving";
+    case "PROGRESS":     return state.status === "uploading";
+    case "PAUSE":        return state.status === "uploading";
+    case "RESUME":       return state.status === "paused";
+    case "SUCCESS":      return state.status === "uploading";
+    case "ERROR":        return ACTIVE.has(state.status);
+    default:             return true; // SELECT_FILE, RESET, OFFLINE, ONLINE
+  }
+}
 
 export function reducer(state: InternalState, action: Action): InternalState {
+  if (!isAllowed(state, action)) return state;
+
   switch (action.type) {
-    case "SELECT_FILE":
-      return { ...state, file: action.file, status: "ready", progress: 0, error: null };
-
-    case "RESOLVE":
-      if (state.status !== "ready" && state.status !== "error") return state;
-      if (!state.file) return state;
-      return { ...state, status: "resolving", error: null };
-
-    case "UPLOAD_START":
-      if (state.status !== "resolving") return state;
-      return { ...state, status: "uploading", progress: 0 };
-
-    case "PROGRESS":
-      if (state.status !== "uploading") return state;
-      return { ...state, progress: action.value };
-
-    case "PAUSE":
-      if (state.status !== "uploading") return state;
-      return { ...state, status: "paused" };
-
-    case "RESUME":
-      if (state.status !== "paused") return state;
-      return { ...state, status: "uploading" };
-
-    case "SUCCESS":
-      if (state.status !== "uploading") return state;
-      return { ...state, status: "success", progress: 100 };
-
-    case "ERROR":
-      if (!ACTIVE.includes(state.status)) return state;
-      return { ...state, status: "error", error: action.error };
-
-    case "RESET":
-      return { ...initialState, isOffline: state.isOffline };
-
-    case "OFFLINE":
-      return { ...state, isOffline: true };
-
-    case "ONLINE":
-      return { ...state, isOffline: false };
-
-    default:
-      return state;
+    case "SELECT_FILE":  return { ...state, file: action.file, status: "ready", progress: 0, error: null };
+    case "RESOLVE":      return { ...state, status: "resolving", error: null };
+    case "UPLOAD_START": return { ...state, status: "uploading", progress: 0 };
+    case "PROGRESS":     return { ...state, progress: action.value };
+    case "PAUSE":        return { ...state, status: "paused" };
+    case "RESUME":       return { ...state, status: "uploading" };
+    case "SUCCESS":      return { ...state, status: "success", progress: 100 };
+    case "ERROR":        return { ...state, status: "error", error: action.error };
+    case "RESET":        return { ...initialState, isOffline: state.isOffline };
+    case "OFFLINE":      return { ...state, isOffline: true };
+    case "ONLINE":       return { ...state, isOffline: false };
+    default:             return state;
   }
 }

@@ -1,7 +1,6 @@
 "use client";
 import { useUploaderContext } from "../context";
 import { FastPixDropZone } from "./DropZone";
-import { FastPixFilePicker } from "./FilePicker";
 import { FastPixTrack } from "./Track";
 import { FastPixStatus } from "./Status";
 import { FastPixStartButton } from "./StartButton";
@@ -18,7 +17,6 @@ export function DefaultLayout() {
     <div className="fpx-default">
       {isPicking && (
         <FastPixDropZone overlay className="fpx-default-drop">
-          <FastPixFilePicker />
           <FastPixStatus className="fpx-default-hint" />
         </FastPixDropZone>
       )}

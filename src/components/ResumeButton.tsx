@@ -3,9 +3,9 @@ import type { CSSProperties, ReactNode } from "react";
 import { useUploaderContext } from "../context";
 
 export interface FastPixResumeButtonProps {
-  className?: string;
-  style?: CSSProperties;
-  children?: ReactNode;
+  readonly className?: string;
+  readonly style?: CSSProperties;
+  readonly children?: ReactNode;
 }
 
 export function FastPixResumeButton({ className, style, children }: FastPixResumeButtonProps) {

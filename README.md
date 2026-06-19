@@ -129,7 +129,6 @@ Render the individual components as children to control layout and styling. Each
 import {
   FastPixUploader,
   FastPixDropZone,
-  FastPixFilePicker,
   FastPixStatus,
   FastPixTrack,
   FastPixStartButton,
@@ -140,7 +139,7 @@ import {
 
 <FastPixUploader endpoint={getSignedUrl} autoStart={false}>
   <FastPixDropZone overlay>
-    <FastPixFilePicker>Choose a video</FastPixFilePicker>
+    <p>Drag a video here, or click to browse</p>
   </FastPixDropZone>
 
   <FastPixStatus />
@@ -296,7 +295,7 @@ All components accept `className` and `style`. They must be rendered inside `<Fa
 
 #### `<FastPixFilePicker>`
 
-A button that opens the file dialog.
+A standalone button that opens the file dialog. Use it on its own or alongside a `FastPixDropZone` — not inside one (the drop zone already opens the dialog when clicked).
 
 | Prop | Type | Description |
 |---|---|---|
@@ -308,17 +307,17 @@ A button that opens the file dialog.
 
 #### `<FastPixDropZone>`
 
-A drag-and-drop area. Place a picker or any content inside it.
+A drop area that also opens the file dialog when clicked or activated with the keyboard. Put inline, non-interactive content inside it (text or an icon) — not another button.
 
 | Prop | Type | Description |
 |---|---|---|
 | `overlay` | `boolean` | Show a highlight overlay while a file is dragged over. |
-| `children` | `ReactNode` | Content shown inside the zone. |
+| `label` | `string` | Accessible label for the zone (default: `"Drag a file here, or press to browse"`). |
+| `children` | `ReactNode` | Inline content shown inside the zone. |
 
 ```tsx
 <FastPixDropZone overlay>
-  <FastPixFilePicker />
-  <p>or drop a file here</p>
+  <p>Drag a video here, or click to browse</p>
 </FastPixDropZone>
 ```
 
@@ -586,7 +585,7 @@ The `size` prop (`"sm" | "md" | "lg"`) scales padding, spacing, text, and contro
 ## Accessibility
 
 - Status text is announced to assistive technology (`role="status"`, `aria-live="polite"`), so screen-reader users hear state and progress changes.
-- All controls are real buttons — keyboard focusable, with visible focus rings.
+- All controls — including the drop zone — are real buttons: keyboard focusable, activatable with Enter or Space, and shown with visible focus rings.
 - The `disabled` state is reflected for both pointer and assistive interaction.
 
 ---

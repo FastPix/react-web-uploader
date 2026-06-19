@@ -3,10 +3,10 @@ import type { CSSProperties } from "react";
 import { useUploaderContext } from "../context";
 
 export interface FastPixTrackProps {
-  className?: string;
-  style?: CSSProperties;
-  variant?: "linear" | "radial";
-  showLabel?: boolean;
+  readonly className?: string;
+  readonly style?: CSSProperties;
+  readonly variant?: "linear" | "radial";
+  readonly showLabel?: boolean;
 }
 
 export function FastPixTrack({ className, style, variant = "linear", showLabel }: FastPixTrackProps) {

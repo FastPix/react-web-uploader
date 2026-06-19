@@ -4,9 +4,9 @@ import type { ChangeEvent, CSSProperties, ReactNode } from "react";
 import { useUploaderContext } from "../context";
 
 export interface FastPixFilePickerProps {
-  className?: string;
-  style?: CSSProperties;
-  children?: ReactNode;
+  readonly className?: string;
+  readonly style?: CSSProperties;
+  readonly children?: ReactNode;
 }
 
 export function FastPixFilePicker({ className, style, children }: FastPixFilePickerProps) {
