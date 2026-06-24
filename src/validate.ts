@@ -14,7 +14,8 @@ function describe(v: unknown): string {
     try { return `${typeof v} (${JSON.stringify(v)})`; }
     catch { return `${typeof v} (unserializable)`; }
   }
-  return `${typeof v} (${String(v)})`; // eslint-disable-next-line @typescript-eslint/no-base-to-string
+  // eslint-disable-next-line @typescript-eslint/no-base-to-string
+  return `${typeof v} (${String(v)})`; // NOSONAR
 }
 
 function validEndpoint(v: unknown): string | null {
