@@ -21,7 +21,7 @@ export type {
   UploaderContextValue,
   Endpoint,
   EndpointResolver,
-  FileRejectReason,
+  FileRejection,
 } from "./types";
 
 export type { FastPixFilePickerProps } from "./components/FilePicker";

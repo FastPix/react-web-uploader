@@ -33,6 +33,7 @@ A FastPix React component for resumable uploads, built on the [FastPix resumable
 - [Appearance](#appearance)
 - [Recipes](#recipes)
 - [Framework & browser support](#framework--browser-support)
+  - [File access on mobile](#file-access-on-mobile)
 - [Accessibility](#accessibility)
 - [Stability](#stability)
 - [License](#license)
@@ -218,7 +219,7 @@ The root component. It runs the upload and provides state to all child component
 | `endpoint` | `string \| (file: File) => string \| Promise<string>` | — (required) | The upload URL, or a function returning it when the upload starts. |
 | `file` | `File` | — | Supply a file directly instead of using the picker / drop zone. |
 | `autoStart` | `boolean` | `true` | Start uploading as soon as a valid file is available. Set `false` to require an explicit start. |
-| `accept` | `string` | — | Allowed file types (e.g. `"video/*"`, `".mp4"`), enforced for both the picker and the drop zone. |
+| `accept` | `string` | — | Allowed file types (e.g. `"video/*"`, `".mp4"`), enforced for both the picker and the drop zone. See [File access on mobile](#file-access-on-mobile) for Android picker behavior. |
 | `maxFileSize` | `number` (KB) | — | Reject files larger than this before uploading. |
 | `chunkSize` | `number` (KB) | — | Size of each upload chunk. |
 | `retryChunkAttempt` | `number` | — | How many times to retry a failed chunk. |
@@ -248,10 +249,13 @@ All events are optional callback props on `<FastPixUploader>`.
 
 | Event | Signature | Fires when |
 |---|---|---|
-| `onFileSelect` | `(file: File) => void` | A valid file is picked or dropped. |
-| `onFileReject` | `(file: File, reason: "type" \| "size") => void` | A file fails `accept` or `maxFileSize`. |
+| `onFileSelect` | `(file: File) => void` | A valid, readable file is picked or dropped. |
+| `onFileReject` | `(file: File, rejection: FileRejection) => void` | A file fails `accept`, `maxFileSize`, or can't be read (see below). |
 | `onUploadStart` | `(file: File) => void` | The upload begins. |
 | `onProgress` | `(percent: number) => void` | Progress updates (0–100). |
+| `onChunkAttempt` | `(info: ChunkInfo) => void` | A chunk upload is attempted. |
+| `onChunkSuccess` | `(info: ChunkInfo) => void` | A chunk finishes successfully. |
+| `onChunkAttemptFailure` | `(info: ChunkFailureInfo) => void` | A chunk attempt fails and will be retried. |
 | `onPause` | `() => void` | The upload is paused. |
 | `onResume` | `() => void` | The upload is resumed. |
 | `onAbort` | `() => void` | The upload is cancelled. |
@@ -259,11 +263,18 @@ All events are optional callback props on `<FastPixUploader>`.
 | `onSuccess` | `() => void` | The upload completes. |
 | `onStateChange` | `(state: UploaderState) => void` | The state changes. |
 
+`onFileReject` receives a `FileRejection` with a `reason` (`"type" | "size" | "unreadable"`) and a ready-to-display `message`. The `"unreadable"` reason covers files the browser hands over but won't let the page read — most often on Android when a video is chosen through the Photos/Gallery picker instead of the file manager (see [File access on mobile](#file-access-on-mobile)).
+
+The chunk events report which chunk is in flight and how many there are: `ChunkInfo` carries `{ chunkNumber, totalChunks?, chunkSize? }`, and `ChunkFailureInfo` carries `{ chunkNumber, attempt, totalAttempts }`. A failure event reports counters only; the underlying cause arrives on `onError`.
+
 ```tsx
 <FastPixUploader
   endpoint={getSignedUrl}
-  onFileReject={(file, reason) => alert(`${file.name} rejected: ${reason}`)}
+  onFileReject={(file, rejection) => alert(rejection.message)}
   onProgress={(p) => setProgress(p)}
+  onChunkSuccess={({ chunkNumber, totalChunks }) =>
+    console.log(`chunk ${chunkNumber}${totalChunks ? ` of ${totalChunks}` : ""}`)
+  }
   onSuccess={() => router.push("/done")}
 />
 ```
@@ -458,7 +469,7 @@ function HeadlessUploader() {
 
 All types are exported for use in your own code:
 
-`FastPixUploaderProps`, `FastPixUploaderRef`, `FastPixAppearance`, `UploaderState`, `UploaderError`, `UploaderContextValue`, `Endpoint`, `EndpointResolver`, `FileRejectReason`, and the prop types for each component (`FastPixFilePickerProps`, `FastPixDropZoneProps`, `FastPixTrackProps`, `FastPixStatusProps`, `FastPixStartButtonProps`, `FastPixPauseButtonProps`, `FastPixResumeButtonProps`, `FastPixAbortButtonProps`).
+`FastPixUploaderProps`, `FastPixUploaderRef`, `FastPixAppearance`, `UploaderState`, `UploaderError`, `UploaderContextValue`, `Endpoint`, `EndpointResolver`, `FileRejection`, `ChunkInfo`, `ChunkFailureInfo`, and the prop types for each component (`FastPixFilePickerProps`, `FastPixDropZoneProps`, `FastPixTrackProps`, `FastPixStatusProps`, `FastPixStartButtonProps`, `FastPixPauseButtonProps`, `FastPixResumeButtonProps`, `FastPixAbortButtonProps`).
 
 ---
 
@@ -549,14 +560,14 @@ The `size` prop (`"sm" | "md" | "lg"`) scales padding, spacing, text, and contro
 <FastPixUploader endpoint={getSignedUrl} />
 ```
 
-**Restrict file type and size.** Validation runs for both the picker and drag-and-drop:
+**Restrict file type and size.** Validation runs for both the picker and drag-and-drop. The `onFileReject` callback receives a ready-to-display message:
 
 ```tsx
 <FastPixUploader
   endpoint={getSignedUrl}
   accept="video/*"
   maxFileSize={1_000_000}  // 1 GB, in KB
-  onFileReject={(file, reason) => toast(`Rejected (${reason}): ${file.name}`)}
+  onFileReject={(file, rejection) => toast(rejection.message)}
 />
 ```
 
@@ -579,6 +590,14 @@ The `size` prop (`"sm" | "md" | "lg"`) scales padding, spacing, text, and contro
 - **Next.js (App Router) and other RSC setups** — the components are client components and can be rendered directly inside server components with no extra setup.
 - **Vite, Create React App, and other bundlers** — supported with no configuration.
 - **Browsers** — modern evergreen browsers. The default styles use `color-mix()` for accent tints; if you target older browsers, override the affected variables with explicit colors.
+
+### File access on mobile
+
+A browser can hand a page a `File` it is not actually allowed to read. The most common case is **Android with `accept="video/*"`**: this routes the user to the Photos/Gallery picker, and the resulting file reference is sometimes sandboxed so the bytes can't be read for upload.
+
+The uploader guards against this: when a file is selected, it verifies the bytes are readable before accepting it. If they aren't, the file is rejected through `onFileReject` with `reason: "unreadable"` and a message that names the user's browser and OS and tells them to pick the video from their device's file manager instead of the Photos/Gallery picker.
+
+To reduce how often this happens, you can broaden `accept` (for example `"video/*,audio/*"`) or omit it entirely, which makes Android open the system file manager rather than the media picker. Since you can't force a particular `accept`, the readability check is always on as a safety net.
 
 ---
 

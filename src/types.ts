@@ -5,8 +5,6 @@ export type UploaderState =
 
 export interface UploaderError { message: string; }
 
-export type FileRejectReason = "type" | "size";
-
 export type EndpointResolver = (file: File) => string | Promise<string>;
 export type Endpoint = string | EndpointResolver;
 
@@ -42,9 +40,12 @@ export interface FastPixUploaderProps {
   children?: ReactNode;
 
   onFileSelect?: (file: File) => void;
-  onFileReject?: (file: File, reason: FileRejectReason) => void;
+  onFileReject?: (file: File, rejection: FileRejection) => void;
   onUploadStart?: (file: File) => void;
   onProgress?: (progress: number) => void;
+  onChunkAttempt?: (info: ChunkInfo) => void;
+  onChunkSuccess?: (info: ChunkInfo) => void;
+  onChunkAttemptFailure?: (info: ChunkFailureInfo) => void;
   onPause?: () => void;
   onResume?: () => void;
   onAbort?: () => void;
@@ -77,4 +78,21 @@ export interface UploaderContextValue {
   resume: () => void;
   abort: () => void;
   reset: () => void;
+}
+
+export interface ChunkInfo {
+  chunkNumber: number;
+  totalChunks?: number;
+  chunkSize?: number;
+}
+
+export interface ChunkFailureInfo {
+  chunkNumber: number;
+  attempt: number;
+  totalAttempts: number;
+}
+
+export interface FileRejection {
+  reason: "type" | "size" | "unreadable";
+  message: string;
 }
