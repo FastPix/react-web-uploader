@@ -10,8 +10,11 @@ const isInt = (v: unknown): v is number => isFiniteNumber(v) && Number.isInteger
 function describe(v: unknown): string {
   if (v === null) return "null";
   if (typeof v === "string") return `"${v}"`;
-  if (typeof v === "object") return `${typeof v} (${JSON.stringify(v)})`;
-  return `${typeof v} (${String(v)})`;
+  if (typeof v === "object") {
+    try { return `${typeof v} (${JSON.stringify(v)})`; }
+    catch { return `${typeof v} (unserializable)`; }
+  }
+  return `${typeof v} (${String(v)})`; // eslint-disable-next-line @typescript-eslint/no-base-to-string
 }
 
 function validEndpoint(v: unknown): string | null {
