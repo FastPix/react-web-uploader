@@ -10,6 +10,7 @@ const isInt = (v: unknown): v is number => isFiniteNumber(v) && Number.isInteger
 function describe(v: unknown): string {
   if (v === null) return "null";
   if (typeof v === "string") return `"${v}"`;
+  if (typeof v === "object") return `${typeof v} (${JSON.stringify(v)})`;
   return `${typeof v} (${String(v)})`;
 }
 

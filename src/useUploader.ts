@@ -228,7 +228,7 @@ export function useUploader(props: FastPixUploaderProps): UploaderContextValue {
       const f = stateRef.current.file;
       if (f && autoStartedFor.current !== f) {
         autoStartedFor.current = f;
-        void startRef.current();
+        startRef.current();
       }
     }
   }, [autoStart, state.status]);
