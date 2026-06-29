@@ -41,7 +41,7 @@ function isAllowed(state: InternalState, action: Action): boolean {
     case "RESUME":       return state.status === "paused";
     case "SUCCESS":      return state.status === "uploading";
     case "ERROR":        return ACTIVE.has(state.status);
-    default:             return true; // SELECT_FILE, RESET, OFFLINE, ONLINE
+    default:             return true; // RESET, OFFLINE, ONLINE
   }
 }
 
