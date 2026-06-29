@@ -10,7 +10,9 @@ export interface FastPixFilePickerProps {
 }
 
 export function FastPixFilePicker({ className, style, children }: FastPixFilePickerProps) {
-  const { selectFile, accept, disabled } = useUploaderContext();
+  const { selectFile, accept, disabled, busy } = useUploaderContext();
+  const blocked = disabled || busy;
+
   const inputRef = useRef<HTMLInputElement>(null);
 
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -25,9 +27,9 @@ export function FastPixFilePicker({ className, style, children }: FastPixFilePic
         type="button"
         className={["fpx-file-picker", className].filter(Boolean).join(" ")}
         style={style}
-        onClick={() => !disabled && inputRef.current?.click()}
-        disabled={disabled}
-        data-fpx-disabled={disabled ? "" : undefined}
+        onClick={() => !blocked && inputRef.current?.click()}
+        disabled={blocked}
+        data-fpx-disabled={blocked ? "" : undefined}
       >
         {children ?? "Browse…"}
       </button>

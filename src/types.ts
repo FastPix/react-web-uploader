@@ -70,6 +70,7 @@ export interface UploaderContextValue {
   file: File | null;
   error: UploaderError | null;
   isOffline: boolean;
+  busy: boolean;
   disabled: boolean;
   accept?: string;
   selectFile: (file: File) => void;
@@ -93,6 +94,6 @@ export interface ChunkFailureInfo {
 }
 
 export interface FileRejection {
-  reason: "type" | "size" | "unreadable";
+  reason: "type" | "size" | "unreadable" | "busy";
   message: string;
 }

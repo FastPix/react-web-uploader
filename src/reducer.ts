@@ -29,10 +29,11 @@ export type Action =
   | { type: "OFFLINE" }
   | { type: "ONLINE" };
 
-const ACTIVE = new Set<UploaderState>(["resolving", "uploading", "paused"]);
+export const ACTIVE = new Set<UploaderState>(["resolving", "uploading", "paused"]);
 
 function isAllowed(state: InternalState, action: Action): boolean {
   switch (action.type) {
+    case "SELECT_FILE":  return !ACTIVE.has(state.status);
     case "RESOLVE":      return (state.status === "ready" || state.status === "error") && !!state.file;
     case "UPLOAD_START": return state.status === "resolving";
     case "PROGRESS":     return state.status === "uploading";

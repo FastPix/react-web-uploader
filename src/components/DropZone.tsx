@@ -18,13 +18,15 @@ export function FastPixDropZone({
   overlay,
   label = "Drag a file here, or press to browse",
 }: FastPixDropZoneProps) {
-  const { selectFile, accept, disabled } = useUploaderContext();
+  const { selectFile, accept, disabled, busy } = useUploaderContext();
+  const blocked = disabled || busy;
+
   const [dragging, setDragging] = useState(false);
   const depth = useRef(0);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const reset = () => { depth.current = 0; setDragging(false); };
-  const browse = () => { if (!disabled) inputRef.current?.click(); };
+  const browse = () => { if (!blocked) inputRef.current?.click(); };
 
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
     const f = e.target.files?.[0];
@@ -34,21 +36,21 @@ export function FastPixDropZone({
 
   const onDragEnter = (e: DragEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    if (disabled) return;
+    if (blocked) return;
     depth.current += 1;
     setDragging(true);
   };
   const onDragOver = (e: DragEvent<HTMLButtonElement>) => { e.preventDefault(); };
   const onDragLeave = (e: DragEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    if (disabled) return;
+    if (blocked) return;
     depth.current -= 1;
     if (depth.current <= 0) reset();
   };
   const onDrop = (e: DragEvent<HTMLButtonElement>) => {
     e.preventDefault();
     reset();
-    if (disabled) return;
+    if (blocked) return;
     const f = e.dataTransfer.files?.[0];
     if (f) selectFile(f);
   };
@@ -59,7 +61,7 @@ export function FastPixDropZone({
         type="button"
         className={["fpx-dropzone", className].filter(Boolean).join(" ")}
         style={style}
-        disabled={disabled}
+        disabled={blocked}
         aria-label={label}
         data-fpx-dragging={dragging ? "" : undefined}
         onClick={browse}

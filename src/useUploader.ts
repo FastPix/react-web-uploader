@@ -1,9 +1,13 @@
 "use client";
 import { useCallback, useEffect, useReducer, useRef } from "react";
 import { Uploader as Engine } from "@fastpix/resumable-uploads";
-import { reducer, initialState } from "./reducer";
-import type { FastPixUploaderProps, UploaderContextValue } from "./types";
+import { reducer, initialState, ACTIVE } from "./reducer";
+import type { FastPixUploaderProps, UploaderContextValue, FileRejection } from "./types";
 import { validateConfig, checkFileReadable } from "./validate";
+
+function busyRejection(name: string): FileRejection {
+  return { reason: "busy", message: `An upload is already in progress. Cancel it before selecting "${name}".` };
+}
 
 export function useUploader(props: FastPixUploaderProps): UploaderContextValue {
   const {
@@ -37,10 +41,20 @@ export function useUploader(props: FastPixUploaderProps): UploaderContextValue {
   const selectFile = useCallback(async (f: File) => {
     if (disabled) return;
 
+    if (ACTIVE.has(stateRef.current.status)) { 
+      onFileReject?.(f, busyRejection(f.name)); 
+      return; 
+    }
+
     const access = await checkFileReadable(f);
     if (!access.ok) {
       onFileReject?.(f, { reason: "unreadable", message: access.message });
       return;
+    }
+
+    if (ACTIVE.has(stateRef.current.status)) { 
+      onFileReject?.(f, busyRejection(f.name)); 
+      return; 
     }
 
     if (accept && !matchesAccept(f, accept)) {
@@ -253,6 +267,7 @@ export function useUploader(props: FastPixUploaderProps): UploaderContextValue {
     file: state.file,
     error: state.error,
     isOffline: state.isOffline,
+    busy: ACTIVE.has(state.status),
     disabled, accept,
     selectFile, start, pause, resume, abort, reset,
   };
