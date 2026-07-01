@@ -1,6 +1,6 @@
 "use client";
 import type { CSSProperties } from "react";
-import { useUploaderContext } from "../context";
+import { useUploaderContext } from "../../core/context";
 
 export interface FastPixTrackProps {
   readonly className?: string;

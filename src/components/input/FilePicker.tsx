@@ -1,7 +1,7 @@
 "use client";
 import { useRef } from "react";
 import type { ChangeEvent, CSSProperties, ReactNode } from "react";
-import { useUploaderContext } from "../context";
+import { useUploaderContext } from "../../core/context";
 
 export interface FastPixFilePickerProps {
   readonly className?: string;

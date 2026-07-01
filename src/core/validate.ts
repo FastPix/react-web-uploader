@@ -1,4 +1,4 @@
-import type { FastPixUploaderProps } from "./types";
+import type { FastPixUploaderProps } from "../types";
 
 const CHUNK_MIN = 5120;
 const CHUNK_MAX = 512000;

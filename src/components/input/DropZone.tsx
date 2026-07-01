@@ -1,7 +1,7 @@
 "use client";
 import { useRef, useState } from "react";
 import type { ChangeEvent, CSSProperties, DragEvent, ReactNode } from "react";
-import { useUploaderContext } from "../context";
+import { useUploaderContext } from "../../core/context";
 
 export interface FastPixDropZoneProps {
   readonly className?: string;

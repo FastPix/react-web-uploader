@@ -1,12 +1,12 @@
 "use client";
-import { useUploaderContext } from "../context";
-import { FastPixDropZone } from "./DropZone";
-import { FastPixTrack } from "./Track";
-import { FastPixStatus } from "./Status";
-import { FastPixStartButton } from "./StartButton";
-import { FastPixPauseButton } from "./PauseButton";
-import { FastPixResumeButton } from "./ResumeButton";
-import { FastPixAbortButton } from "./AbortButton";
+import { useUploaderContext } from "../core/context";
+import { FastPixDropZone } from "./input/DropZone";
+import { FastPixTrack } from "./feedback/Track";
+import { FastPixStatus } from "./feedback/Status";
+import { FastPixStartButton } from "./controls/StartButton";
+import { FastPixPauseButton } from "./controls/PauseButton";
+import { FastPixResumeButton } from "./controls/ResumeButton";
+import { FastPixAbortButton } from "./controls/AbortButton";
 
 export function DefaultLayout() {
   const { state } = useUploaderContext();

@@ -1,7 +1,7 @@
 "use client";
 import type { CSSProperties } from "react";
-import { useUploaderContext } from "../context";
-import type { UploaderState, UploaderError } from "../types";
+import { useUploaderContext } from "../../core/context";
+import type { UploaderState, UploaderError } from "../../types";
 
 export interface FastPixStatusProps {
   readonly className?: string;

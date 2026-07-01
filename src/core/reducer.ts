@@ -1,4 +1,4 @@
-import type { UploaderState, UploaderError } from "./types";
+import type { UploaderState, UploaderError } from "../types";
 
 export interface InternalState {
   readonly status: UploaderState;

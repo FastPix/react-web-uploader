@@ -1,14 +1,14 @@
 "use client";
 import { forwardRef, useImperativeHandle } from "react";
 import type { CSSProperties } from "react";
-import { UploaderProvider } from "./context";
-import { DefaultLayout } from "./components/DefaultLayout";
-import { useUploader } from "./useUploader";
+import { UploaderProvider } from "../core/context";
+import { DefaultLayout } from "./DefaultLayout";
+import { useUploader } from "../core/useUploader";
 import type {
   FastPixUploaderProps,
   FastPixUploaderRef,
   FastPixAppearance,
-} from "./types";
+} from "../types";
 
 const SIZE_SCALE = { sm: "0.875", md: "1", lg: "1.125" } as const;
 

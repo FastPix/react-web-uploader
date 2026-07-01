@@ -24,7 +24,7 @@ To make API requests, you'll need a valid **Access Token** and **Secret Key**. S
 
 Once you have your credentials, use the [Upload media from device](https://fastpix.com/docs/video-on-demand-api/upload-and-import-videos/direct-upload-video-media) API to generate a signed URL. You pass that URL to the component, and it uploads the file in resumable chunks. Creating the upload URL, checking when the media is ready for playback, and rendering the player are handled in your own application.
 
-```
+```text
 your app ──── upload URL ────▶ <FastPixUploader /> ──── onSuccess ────▶ your app
 ```
 
@@ -55,48 +55,50 @@ your app ──── upload URL ────▶ <FastPixUploader /> ───�
 
 ## Installation
 
-Install the component using your preferred package manager:
+Install the component using your preferred package manager. This package is currently in **beta**, so install it from the `beta` tag:
 
 ### Using npm
 
-```
-npm install @fastpix/react-uploader
+```bash
+npm install @fastpix/fp-react-uploader@beta
 ```
 
 ### Using pnpm
 
-```
-pnpm add @fastpix/react-uploader
+```bash
+pnpm add @fastpix/fp-react-uploader@beta
 ```
 
 ### Using yarn
 
+```bash
+yarn add @fastpix/fp-react-uploader@beta
 ```
-yarn add @fastpix/react-uploader
-```
+
+> **Note:** While the package is in beta it is published under the `beta` tag rather than `latest`, so the `@beta` suffix is required. Once `1.0.0` ships, a plain `npm install @fastpix/fp-react-uploader` will install the stable release.
 
 `react` and `react-dom` (v18 or later) are peer dependencies and should already be in your app.
 
 Import the stylesheet once, anywhere in your app (for example, your root layout or entry file):
 
-```
-import "@fastpix/react-uploader/styles.css";
+```tsx
+import "@fastpix/fp-react-uploader/styles.css";
 ```
 
 ## Basic Usage
 
 ### Import
 
-```
-import { FastPixUploader } from "@fastpix/react-uploader";
-import "@fastpix/react-uploader/styles.css";
+```tsx
+import { FastPixUploader } from "@fastpix/fp-react-uploader";
+import "@fastpix/fp-react-uploader/styles.css";
 ```
 
 ### Integration
 
 The fastest path - a complete uploader with sensible defaults:
 
-```
+```tsx
 export default function UploadPage() {
   return (
     <FastPixUploader endpoint="https://your-fastpix-upload-url" />
@@ -108,7 +110,7 @@ export default function UploadPage() {
 
 In practice you'll create the upload URL once a file is selected. Pass a function to `endpoint` instead of a string - it receives the selected `File` and returns the URL (it may be async). Here `getSignedUrl` is your own function that returns a FastPix upload URL for the file:
 
-```
+```tsx
 <FastPixUploader endpoint={getSignedUrl} />
 ```
 
@@ -118,7 +120,7 @@ In practice you'll create the upload URL once a file is selected. Pass a functio
 
 Pass callback props to respond to the upload lifecycle. All are optional.
 
-```
+```tsx
 <FastPixUploader
   endpoint={getSignedUrl}
   accept="video/*"
@@ -139,7 +141,7 @@ See [Events](#events) for the full list.
 
 Render the individual components as children to control layout and styling. Each one reads the upload state automatically, so they work wherever you place them and in any order.
 
-```
+```tsx
 import {
   FastPixUploader,
   FastPixDropZone,
@@ -149,7 +151,7 @@ import {
   FastPixPauseButton,
   FastPixResumeButton,
   FastPixAbortButton,
-} from "@fastpix/react-uploader";
+} from "@fastpix/fp-react-uploader";
 
 <FastPixUploader endpoint={getSignedUrl} autoStart={false}>
   <FastPixDropZone overlay>
@@ -168,7 +170,7 @@ import {
 
 Apply an appearance without writing any CSS:
 
-```
+```tsx
 <FastPixUploader
   endpoint={getSignedUrl}
   size="lg"
@@ -178,9 +180,9 @@ Apply an appearance without writing any CSS:
 
 Drive it programmatically with a ref:
 
-```
+```tsx
 import { useRef } from "react";
-import { FastPixUploader, type FastPixUploaderRef } from "@fastpix/react-uploader";
+import { FastPixUploader, type FastPixUploaderRef } from "@fastpix/fp-react-uploader";
 
 function Example() {
   const uploader = useRef<FastPixUploaderRef>(null);
@@ -238,7 +240,7 @@ The `<FastPixUploader>` component accepts the following props:
 
 ### Example usage of integrating all parameters
 
-```
+```tsx
 <FastPixUploader
   endpoint={getSignedUrl}
   autoStart={false}
@@ -290,7 +292,7 @@ Pass a `ref` typed as `FastPixUploaderRef` to control the component from outside
 | `getState()` | Returns the current `UploaderState`. |
 | `getFile()` | Returns the current `File`, or `null`. |
 
-```
+```tsx
 const ref = useRef<FastPixUploaderRef>(null);
 // later:
 ref.current?.start();
@@ -309,7 +311,7 @@ A standalone button that opens the file dialog. Use it on its own or alongside a
 | ---- | ---- | ----------- |
 | `children` | `ReactNode` | Custom button label (default: `"Browse…"`). |
 
-```
+```tsx
 <FastPixFilePicker>Select a video</FastPixFilePicker>
 ```
 
@@ -323,7 +325,7 @@ A drop area that also opens the file dialog when clicked or activated with the k
 | `label` | `string` | Accessible label for the zone (default: `"Drag a file here, or press to browse"`). |
 | `children` | `ReactNode` | Inline content shown inside the zone. |
 
-```
+```tsx
 <FastPixDropZone overlay>
   <p>Drag a video here, or click to browse</p>
 </FastPixDropZone>
@@ -338,7 +340,7 @@ The progress indicator.
 | `variant` | `"linear" \| "radial"` | Bar or circular indicator. Default is `"linear"`. |
 | `showLabel` | `boolean` | Show the percentage. Default is `false`. |
 
-```
+```tsx
 <FastPixTrack variant="radial" showLabel />
 ```
 
@@ -350,7 +352,7 @@ Text describing the current state.
 | ---- | ---- | ----------- |
 | `labels` | `Partial<Record<UploaderState, string>>` | Override the text shown for any state (for wording or translation). |
 
-```
+```tsx
 <FastPixStatus
   labels={{
     idle: "Pick a video to begin",
@@ -368,7 +370,7 @@ Starts the upload. Active when a file is ready (or to retry after an error). Pai
 | ---- | ---- | ----------- |
 | `children` | `ReactNode` | Custom label (default: `"Upload"`). |
 
-```
+```tsx
 <FastPixStartButton>Start upload</FastPixStartButton>
 ```
 
@@ -380,7 +382,7 @@ Pauses an active upload.
 | ---- | ---- | ----------- |
 | `children` | `ReactNode` | Custom label (default: `"Pause"`). |
 
-```
+```tsx
 <FastPixPauseButton>Hold</FastPixPauseButton>
 ```
 
@@ -392,7 +394,7 @@ Resumes a paused upload.
 | ---- | ---- | ----------- |
 | `children` | `ReactNode` | Custom label (default: `"Resume"`). |
 
-```
+```tsx
 <FastPixResumeButton>Continue</FastPixResumeButton>
 ```
 
@@ -404,7 +406,7 @@ Cancels the upload and returns to idle.
 | ---- | ---- | ----------- |
 | `children` | `ReactNode` | Custom label (default: `"Cancel"`). |
 
-```
+```tsx
 <FastPixAbortButton>Cancel</FastPixAbortButton>
 ```
 
@@ -414,8 +416,8 @@ Cancels the upload and returns to idle.
 
 Read the upload state and controls inside a custom child of `<FastPixUploader>`. Use it to build your own components that still plug into the uploader.
 
-```
-import { useUploaderContext } from "@fastpix/react-uploader";
+```tsx
+import { useUploaderContext } from "@fastpix/fp-react-uploader";
 
 function MyProgress() {
   const { state, progress } = useUploaderContext();
@@ -443,8 +445,8 @@ It returns:
 
 Build a completely custom uploader with no provided markup. It takes the same options as `<FastPixUploader>` and returns the same controls as `useUploaderContext()`, for you to wire into your own components.
 
-```
-import { useUploader } from "@fastpix/react-uploader";
+```tsx
+import { useUploader } from "@fastpix/fp-react-uploader";
 
 function HeadlessUploader() {
   const { state, progress, selectFile, start } = useUploader({
@@ -468,7 +470,7 @@ There are three ways to customize the appearance, from lightest to most involved
 
 **1. CSS variables.** Set any `--fpx-*` variable on the component (or globally on `:root`). This covers most cases.
 
-```
+```css
 .fpx-uploader {
   --fpx-accent-color: #00d1ff;
   --fpx-radius: 12px;
@@ -478,7 +480,7 @@ There are three ways to customize the appearance, from lightest to most involved
 
 **2. The `appearance` prop.** The same variables as a typed object, when you'd rather not write CSS.
 
-```
+```tsx
 <FastPixUploader endpoint={getSignedUrl} appearance={{ accentColor: "#00d1ff", radius: "12px" }} />
 ```
 
@@ -523,7 +525,7 @@ There are three ways to customize the appearance, from lightest to most involved
 
 The root carries the current state as a data attribute, so you can style any phase in plain CSS:
 
-```
+```css
 .fpx-uploader[data-fpx-state="error"]   { /* error look */ }
 .fpx-uploader[data-fpx-state="success"] { /* success look */ }
 .fpx-dropzone[data-fpx-dragging]        { /* while dragging */ }
@@ -535,7 +537,7 @@ Available hooks: `data-fpx-state` (the current state), `data-fpx-dragging` (on t
 
 The `size` prop (`"sm" | "md" | "lg"`) scales padding, spacing, text, and control sizes together.
 
-```
+```tsx
 <FastPixUploader endpoint={getSignedUrl} size="sm" />
 ```
 
@@ -568,7 +570,7 @@ The component guards against this: when a file is selected, it verifies the byte
 
 ## Stability
 
-This package is pre-1.0. The API is settling but minor releases may include breaking changes until `1.0.0`. Pin a version if you need stability, and check the changelog before upgrading.
+This package is in **beta** (`1.0.0-beta.x`). The API is close to final, but small breaking changes are still possible before the stable `1.0.0` release. Pin an exact version if you need stability, and check the [changelog](./CHANGELOG.md) before upgrading.
 
 ## References
 

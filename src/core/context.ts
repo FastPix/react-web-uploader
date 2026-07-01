@@ -1,6 +1,6 @@
 "use client";
 import { createContext, useContext } from "react";
-import type { UploaderContextValue } from "./types";
+import type { UploaderContextValue } from "../types";
 
 const UploaderContext = createContext<UploaderContextValue | null>(null);
 

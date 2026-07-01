@@ -1,6 +1,6 @@
 "use client";
 import type { CSSProperties, ReactNode } from "react";
-import { useUploaderContext } from "../context";
+import { useUploaderContext } from "../../core/context";
 
 export interface FastPixAbortButtonProps {
   readonly className?: string;

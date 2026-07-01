@@ -2,7 +2,7 @@
 import { useCallback, useEffect, useReducer, useRef } from "react";
 import { Uploader as Engine } from "@fastpix/resumable-uploads";
 import { reducer, initialState, ACTIVE } from "./reducer";
-import type { FastPixUploaderProps, UploaderContextValue, FileRejection } from "./types";
+import type { FastPixUploaderProps, UploaderContextValue, FileRejection } from "../types";
 import { validateConfig, checkFileReadable } from "./validate";
 
 function busyRejection(name: string): FileRejection {
@@ -210,10 +210,10 @@ export function useUploader(props: FastPixUploaderProps): UploaderContextValue {
     onPause?.();
   }, [onPause]);
 
-  const resume = useCallback(() => {
+  const resume = useCallback(async () => {
     if (stateRef.current.status !== "paused") return;
     pauseIntentRef.current = false;
-    try { engineRef.current?.resume(); } catch { /* noop */ }
+    try { await engineRef.current?.resume(); } catch { /* noop */ }
     dispatch({ type: "RESUME" });
     onResume?.();
   }, [onResume]);
