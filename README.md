@@ -2,27 +2,27 @@
 
 A FastPix React component for resumable uploads, built on the [FastPix resumable web uploads SDK](https://github.com/FastPix/web-uploads-sdk).
 
-`<FastPixUploader />` renders a complete upload experience - file selection, drag and drop, progress, and pause, resume, and cancel controls - and can be composed from individual components when you want control over layout. You provide an upload URL; the component uploads the file in resumable chunks, reports progress, and calls `onSuccess` when it finishes.
+`<FastPixUploader />` provides a complete upload experience, including file selection, drag-and-drop, upload progress, and pause, resume, and cancel controls. You can also compose it from individual components to customize the layout. Provide an upload URL, and the component uploads the file in resumable chunks, reports progress, and calls `onSuccess` when the upload completes.
 
 ## Key Features
 
 - **Resumable** - pause, resume, and cancel an in-progress upload.
 - **Eager or lazy URL** - pass a URL string, or a function that returns one when a file is selected.
-- **Customizable appearance** - accent color, radius, sizing, and every surface through CSS variables or an `appearance` prop, with no styling library required.
+- **Customizable appearance** - customize the accent color, border radius, sizing, and other UI elements using CSS variables or the `appearance` prop. No styling library is required.
 - **Server-rendering ready** - works in React Server Component setups (such as the Next.js App Router) without extra configuration.
-- **Headless option** - a hook exposes the upload state and controls when you want to render the markup yourself.
+- **Headless option** - use a hook to access the upload state and controls while rendering your own UI.
 - **Typed** - ships with TypeScript definitions.
-- **Accessible** - status changes are announced to assistive technology, and controls are keyboard accessible.
+- **Accessible** - status changes are announced to assistive technology, supports keyboard navigation.
 
 ## Prerequisites
 
 ### Getting Started with FastPix
 
-To use this component you will need a signed upload URL.
+To use this component, you need a signed upload URL.
 
 To make API requests, you'll need a valid **Access Token** and **Secret Key**. See the [Basic Authentication Guide](https://fastpix.com/docs/getting-started/activate-your-account) for details on retrieving these credentials.
 
-Once you have your credentials, use the [Upload media from device](https://fastpix.com/docs/video-on-demand-api/upload-and-import-videos/direct-upload-video-media) API to generate a signed URL. You pass that URL to the component, and it uploads the file in resumable chunks. Creating the upload URL, checking when the media is ready for playback, and rendering the player are handled in your own application.
+After you have your credentials, use the [Upload media from device](https://fastpix.com/docs/video-on-demand-api/upload-and-import-videos/direct-upload-video-media) API to generate a signed URL. You pass that URL to the component, and it uploads the file in resumable chunks. Creating the upload URL, checking when the media is ready for playback, and rendering the player are handled in your own application.
 
 ```text
 your app ──── upload URL ────▶ <FastPixUploader /> ──── onSuccess ────▶ your app
@@ -213,9 +213,11 @@ function Example() {
 
 Typical flow: `idle → ready → resolving → uploading → success`, with `paused` reachable from `uploading`, and `error` recoverable into a new attempt.
 
-**Endpoint.** The `endpoint` prop is either a URL string (known up front) or a function `(file) => string | Promise<string>` that runs when the upload starts. Use the function form to create the URL per file.
+**Endpoint.**
+The `endpoint` prop is either a URL string (known up front) or a function `(file) => string | Promise<string>` that runs when the upload starts. Use the function form to create the URL per file.
 
-**Controlled file.** If your app already has a `File` (for example, from your own picker), pass it via the `file` prop instead of using the built-in picker or drop zone.
+**Controlled file.**
+If your app already has a `File` (for example, from your own picker), pass it via the `file` prop instead of using the built-in picker or drop zone.
 
 ## Parameters Accepted
 
@@ -273,10 +275,12 @@ All events are optional callback props on `<FastPixUploader>`.
 | `onError` | `(error: { message: string }) => void` | The upload fails. |
 | `onSuccess` | `() => void` | The upload completes. |
 | `onStateChange` | `(state: UploaderState) => void` | The state changes. |
+| `onOffline` | `() => void` | The browser loses its network connection (fires while idle or uploading). |
+| `onOnline` | `() => void` | The browser regains its network connection. |
 
-`onFileReject` receives a `FileRejection` with a `reason` (`"type" | "size" | "unreadable"`) and a ready-to-display `message`. The `"unreadable"` reason covers files the browser hands over but won't let the page read - see [File access on mobile](#file-access-on-mobile).
+`onFileReject` receives a `FileRejection` with a `reason` (`"type" | "size" | "unreadable" | "busy"`) and a ready-to-display `message`. The `"unreadable"` reason covers files the browser hands over but won't let the page read - see [File access on mobile](#file-access-on-mobile). The `"busy"` reason fires when a file is selected while an upload is already in progress; cancel the current upload before selecting another.
 
-The chunk events report which chunk is in flight and how many there are: `ChunkInfo` carries `{ chunkNumber, totalChunks?, chunkSize? }`, and `ChunkFailureInfo` carries `{ chunkNumber, attempt, totalAttempts }`. A failure event reports counters only; the underlying cause arrives on `onError`.
+The chunk events report which chunk is in flight and how many there are: `ChunkInfo` carries `{ chunkNumber, totalChunks?, chunkSize? }`, and `ChunkFailureInfo` carries `{ chunkNumber, attempt, totalAttempts }`. Failure events report only chunk counters. To determine the cause of a failure, use the `onError` callback.
 
 ### Ref (imperative control)
 
@@ -305,7 +309,7 @@ All components accept `className` and `style`. They must be rendered inside `<Fa
 
 ### `<FastPixFilePicker>`
 
-A standalone button that opens the file dialog. Use it on its own or alongside a `FastPixDropZone` - not inside one (the drop zone already opens the dialog when clicked).
+A standalone button that opens the file picker. Use it on its own or alongside `FastPixDropZone`. Do not place it inside `FastPixDropZone`, because the drop zone already opens the file picker when clicked.
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
@@ -414,7 +418,7 @@ Cancels the upload and returns to idle.
 
 ### `useUploaderContext()`
 
-Read the upload state and controls inside a custom child of `<FastPixUploader>`. Use it to build your own components that still plug into the uploader.
+Access the upload state and controls from within a custom child component of `<FastPixUploader>`. Use this hook to build custom components that integrate with the uploader.
 
 ```tsx
 import { useUploaderContext } from "@fastpix/fp-react-uploader";
@@ -435,7 +439,7 @@ It returns:
 | `progress` | `number` | 0–100. |
 | `file` | `File \| null` | Selected file. |
 | `error` | `{ message: string } \| null` | Last error. |
-| `isOffline` | `boolean` | Whether the connection is currently offline. |
+| `isOffline` | `boolean` | Live network status, tracked in all states including idle. |
 | `disabled` | `boolean` | Whether interaction is disabled. |
 | `accept` | `string \| undefined` | The configured file filter. |
 | `selectFile` | `(file: File) => void` | Select a file (runs validation). |
@@ -549,7 +553,7 @@ All types are exported for use in your own code:
 
 ## File access on mobile
 
-A browser can hand a page a `File` it is not actually allowed to read. The most common case is **Android with `accept="video/*"`**: this routes the user to the Photos/Gallery picker, and the resulting file reference is sometimes sandboxed so the bytes can't be read for upload.
+A browser provides a `File` object that your application cannot read. This commonly occurs on Android when using `accept="video/*"`, which opens the Photos or Gallery app. The selected file might be sandboxed, preventing the browser from reading its contents for upload.
 
 The component guards against this: when a file is selected, it verifies the bytes are readable before accepting it. If they aren't, the file is rejected through `onFileReject` with `reason: "unreadable"` and a message that names the user's browser and OS and tells them to pick the video from their device's file manager instead of the Photos/Gallery picker.
 

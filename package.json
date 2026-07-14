@@ -1,6 +1,6 @@
 {
   "name": "@fastpix/fp-react-uploader",
-  "version": "1.0.0",
+  "version": "1.0.0-beta.1",
   "description": "FastPix React Uploader is a customizable React component for chunked, resumable file uploads with drag-and-drop, progress, and pause/resume.",
   "files": [
     "dist"
@@ -47,7 +47,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@fastpix/resumable-uploads": "^1.0.5"
+    "@fastpix/resumable-uploads": "^1.0.6"
   },
   "peerDependencies": {
     "react": ">=18",
