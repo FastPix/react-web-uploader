@@ -5,20 +5,32 @@ title: '[BUG] '
 labels: bug
 assignees: ''
 ---
+Report an issue with the FastPix React Uploader.
+
+**Important**
+
+Never include secrets such as signed upload URLs, API tokens, or access credentials. Redact any sensitive values before submitting the report.
 
 # Bug Description
 Provide a clear and concise description of the issue you encountered with the FastPix React Uploader.
 
----
+## Severity
+
+How severely does this issue affect your application?
+
+- [ ] Blocks production
+- [ ] High
+- [ ] Medium
+- [ ] Low
 
 # Steps to Reproduce
 
 ### 1. **SDK Setup**
 
-Install the FastPix React Uploader (currently in beta, so install from the `beta` tag):
+Install the FastPix React Uploader:
 
 ```bash
-npm install @fastpix/fp-react-uploader@beta
+npm install @fastpix/fp-react-uploader
 ```
 
 Import the stylesheet once, anywhere in your app:
@@ -74,17 +86,20 @@ Replace with the exact code where the bug occurs.
 - **Framework**: [e.g., React 18, Next.js App Router, Vite, Create React App]
 - **Integration**: [Default `<FastPixUploader />` / Composed with individual components / Headless via `useUploader`]
 
----
+Package manager used:
 
-# Logs / Errors / Console Output
+- npm
+- pnpm
+- Yarn
+- Bun
+
+## Logs or Errors Messages
 ```
 Paste browser console logs, network errors, or SDK errors here
 ```
 
----
-
 # Additional Context
-Add any information that might help, such as:
+Provide any additional information that might help reproduce the issue, such as:
 
 - Resumable upload behavior (pause / resume / cancel)
 - Chunk size or retry configuration used
@@ -92,7 +107,13 @@ Add any information that might help, such as:
 - Server-rendered (RSC / Next.js App Router) setup
 - Custom appearance or CSS variable overrides
 
----
+## Checklist
+
+- [ ] Included a minimal reproduction
+- [ ] Included environment details
+- [ ] Included logs or error messages (if available)
+- [ ] Redacted all sensitive information
+- [ ] Checked for existing issues
 
 # Screenshots / Screen Recording
 If applicable, attach screenshots or a short video demonstrating the issue.

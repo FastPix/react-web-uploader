@@ -8,7 +8,9 @@ assignees: ''
 
 # Documentation Issue
 
-Thank you for helping improve the FastPix React Uploader documentation! Please provide the following information:
+Thank you for helping improve the FastPix React Uploader documentation.
+
+Complete the sections below to help us review and resolve the issue.
 
 ## Issue Type
 - [ ] Missing documentation
@@ -16,20 +18,20 @@ Thank you for helping improve the FastPix React Uploader documentation! Please p
 - [ ] Unclear explanation
 - [ ] Broken links
 - [ ] Outdated content
-- [ ] Other: _______________
+- [ ] Other (describe):
 
 ## Description
-**Provide a clear description of the documentation issue:**
+**Describe the documentation issue.**
 
 <!-- Example: Steps, props, or code snippets are confusing, incomplete, or incorrect -->
 
 ## Current Documentation
-**Paste the current content here:**
+**Paste the current documentation, if applicable.**
 
 <!-- Example: Copy the section of the README or docs that is incorrect -->
 
 ## Expected Documentation
-**How should the documentation look instead?**
+**Describe how the documentation should be updated.**
 
 ```tsx
 // Example: Correct usage for FastPix React Uploader
@@ -63,7 +65,7 @@ import "@fastpix/fp-react-uploader/styles.css";
 - [ ] Other: _______________
 
 ## Proposed Fix
-**Suggested correction or updated example:**
+Describe the proposed update.
 
 <!-- Example: Provide correct code snippet, instructions, or description -->
 
@@ -72,18 +74,6 @@ Add any other context about the issue here.
 
 ## Screenshots
 <!-- If applicable, include screenshots of the documentation issue -->
-
-### Related Issues
-- GitHub Issues: [Link related issues]
-- User Feedback: [Link to complaints or confusion]
-
-### Testing
-**How did you discover this issue?**
-
-- [ ] While following the documentation
-- [ ] User reported confusion
-- [ ] Code didn't work as documented
-- [ ] Other: _______________
 
 ## Priority
 - [ ] Critical (Blocks users from using the uploader)

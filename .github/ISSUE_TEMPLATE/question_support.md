@@ -8,7 +8,13 @@ assignees: ''
 
 # Question/Support
 
-Thank you for reaching out! We're here to help you with the FastPix React Uploader. To get faster and more accurate help, please provide the following information:
+Need help with the FastPix React Uploader?
+
+Complete the sections below so we can understand your question and help you more quickly.
+
+**Important**
+
+Never include signed upload URLs, API keys, access tokens, or other secrets. Redact any sensitive information before submitting your issue.
 
 ## Question Type
 - [ ] How to use a specific component or prop
@@ -24,7 +30,7 @@ Thank you for reaching out! We're here to help you with the FastPix React Upload
 <!-- Provide a clear and specific question about the React Uploader -->
 
 ## What You've Tried
-**What have you already attempted to solve this?**
+**Describe what you've already tried.**
 
 ```tsx
 import { FastPixUploader } from "@fastpix/fp-react-uploader";
@@ -75,18 +81,11 @@ import "@fastpix/fp-react-uploader/styles.css";
 ## Additional Context
 
 ### Use Case
-**What are you building?**
+**What type of application are you building?**
 - [ ] Web app (React, Next.js, etc.)
 - [ ] Content management / upload dashboard
 - [ ] Video streaming product
 - [ ] Other: _______________
-
-### Timeline
-**When do you need this resolved?**
-- [ ] ASAP (blocking development)
-- [ ] This week
-- [ ] This month
-- [ ] No rush
 
 ### Resources Checked
 **What resources have you already checked?**
