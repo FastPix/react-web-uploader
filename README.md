@@ -55,27 +55,25 @@ your app ──── upload URL ────▶ <FastPixUploader /> ───�
 
 ## Installation
 
-Install the component using your preferred package manager. This package is currently in **beta**, so install it from the `beta` tag:
+Install the component using your preferred package manager.
 
 ### Using npm
 
 ```bash
-npm install @fastpix/fp-react-uploader@beta
+npm install @fastpix/fp-react-uploader@latest
 ```
 
 ### Using pnpm
 
 ```bash
-pnpm add @fastpix/fp-react-uploader@beta
+pnpm add @fastpix/fp-react-uploader@latest
 ```
 
 ### Using yarn
 
 ```bash
-yarn add @fastpix/fp-react-uploader@beta
+yarn add @fastpix/fp-react-uploader@latest
 ```
-
-> **Note:** While the package is in beta it is published under the `beta` tag rather than `latest`, so the `@beta` suffix is required. Once `1.0.0` ships, a plain `npm install @fastpix/fp-react-uploader` will install the stable release.
 
 `react` and `react-dom` (v18 or later) are peer dependencies and should already be in your app.
 
@@ -571,10 +569,6 @@ The component guards against this: when a file is selected, it verifies the byte
 - Status text is announced to assistive technology (`role="status"`, `aria-live="polite"`), so screen-reader users hear state and progress changes.
 - All controls - including the drop zone - are real buttons: keyboard focusable, activatable with Enter or Space, and shown with visible focus rings.
 - The `disabled` state is reflected for both pointer and assistive interaction.
-
-## Stability
-
-This package is in **beta** (`1.0.0-beta.x`). The API is close to final, but small breaking changes are still possible before the stable `1.0.0` release. Pin an exact version if you need stability, and check the [changelog](./CHANGELOG.md) before upgrading.
 
 ## References
 
