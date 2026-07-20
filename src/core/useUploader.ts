@@ -16,9 +16,13 @@ export function useUploader(props: FastPixUploaderProps): UploaderContextValue {
     onFileSelect, onFileReject, onUploadStart, onProgress,
     onChunkAttempt, onChunkSuccess, onChunkAttemptFailure, 
     onPause, onResume, onAbort, onError, onSuccess, onStateChange,
+    onOffline, onOnline,
   } = props;
 
   const [state, dispatch] = useReducer(reducer, initialState);
+
+  const netCbRef = useRef({ onOnline, onOffline });
+  netCbRef.current = { onOnline, onOffline };
 
   const stateRef = useRef(state);
   stateRef.current = state;
@@ -162,17 +166,6 @@ export function useUploader(props: FastPixUploaderProps): UploaderContextValue {
         });
       });
 
-      engine.on("offline", () => {
-        dispatch({ type: "OFFLINE" });
-      });
-
-      engine.on("online", () => {
-        dispatch({ type: "ONLINE" });
-        if (pauseIntentRef.current) {
-          try { engineRef.current?.pause(); } catch { /* noop */ }
-        }
-      });
-
       engine.on("success", () => {
         clearEngine();
         dispatch({ type: "SUCCESS" });
@@ -181,6 +174,7 @@ export function useUploader(props: FastPixUploaderProps): UploaderContextValue {
 
       engine.on("error", (e: any) => {
         const message = e?.detail?.message ?? "Upload failed";
+        try { engine.abort(); } catch { /* detach listeners, kill session */ }
         clearEngine();
         dispatch({ type: "ERROR", error: { message } });
         onError?.({ message });
@@ -232,6 +226,36 @@ export function useUploader(props: FastPixUploaderProps): UploaderContextValue {
     cancelEngine();
     dispatch({ type: "RESET" });
   }, [cancelEngine]);
+
+  useEffect(() => {
+  if (globalThis.window === undefined) return;
+
+  const handleOffline = () => {
+    dispatch({ type: "OFFLINE" });
+    netCbRef.current.onOffline?.();
+  };
+
+  const handleOnline = () => {
+    dispatch({ type: "ONLINE" });
+    if (pauseIntentRef.current) {
+      try { engineRef.current?.pause(); } catch { /* noop */ }
+    }
+    netCbRef.current.onOnline?.();
+  };
+
+  // Sync initial connectivity without firing a transition callback.
+  if (globalThis.navigator !== undefined && !globalThis.navigator.onLine) {
+    dispatch({ type: "OFFLINE" });
+  }
+
+  globalThis.window.addEventListener("offline", handleOffline);
+  globalThis.window.addEventListener("online", handleOnline);
+
+  return () => {
+    globalThis.window.removeEventListener("offline", handleOffline);
+    globalThis.window.removeEventListener("online", handleOnline);
+  };
+}, []);
 
   useEffect(() => {
     if (fileProp) selectFile(fileProp);

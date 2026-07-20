@@ -52,6 +52,8 @@ export interface FastPixUploaderProps {
   onError?: (error: UploaderError) => void;
   onSuccess?: () => void;
   onStateChange?: (state: UploaderState) => void;
+  onOffline?: () => void;
+  onOnline?: () => void;
 }
 
 export interface FastPixUploaderRef {
