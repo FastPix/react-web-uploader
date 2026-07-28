@@ -79,8 +79,9 @@ export function useUploader(props: FastPixUploaderProps): UploaderContextValue {
       return;
     }
 
-    dispatch({ type: "SELECT_FILE", file: f });
-    onFileSelect?.(f);
+      autoStartedFor.current = null;
+      dispatch({ type: "SELECT_FILE", file: f });
+      onFileSelect?.(f);
   }, [disabled, accept, maxFileSize, onFileReject, onFileSelect]);
 
   const start = useCallback(async () => {
@@ -128,12 +129,7 @@ export function useUploader(props: FastPixUploaderProps): UploaderContextValue {
       engineRef.current = engine;
 
       engine.on("progress", (e: any) => {
-        if (stateRef.current.status === "paused") {
-          if (pauseIntentRef.current) {
-            try { engineRef.current?.pause(); } catch { /* noop */ }
-          }
-          return;
-        }
+        if (stateRef.current.status === "paused") return;
         const value = Math.round(e?.detail?.progress ?? 0);
         dispatch({ type: "PROGRESS", value });
         onProgress?.(value);
@@ -194,11 +190,8 @@ export function useUploader(props: FastPixUploaderProps): UploaderContextValue {
   const startRef = useRef(start);
   startRef.current = start;
 
-  const pauseIntentRef = useRef(false);
-
   const pause = useCallback(() => {
     if (stateRef.current.status !== "uploading") return;
-    pauseIntentRef.current = true;
     try { engineRef.current?.pause(); } catch { /* noop */ }
     dispatch({ type: "PAUSE" });
     onPause?.();
@@ -206,14 +199,12 @@ export function useUploader(props: FastPixUploaderProps): UploaderContextValue {
 
   const resume = useCallback(async () => {
     if (stateRef.current.status !== "paused") return;
-    pauseIntentRef.current = false;
     try { await engineRef.current?.resume(); } catch { /* noop */ }
     dispatch({ type: "RESUME" });
     onResume?.();
   }, [onResume]);
 
   const abort = useCallback(() => {
-    pauseIntentRef.current = false;
     autoStartedFor.current = null;
     cancelEngine();
     dispatch({ type: "RESET" });
@@ -221,7 +212,6 @@ export function useUploader(props: FastPixUploaderProps): UploaderContextValue {
   }, [cancelEngine, onAbort]);
 
   const reset = useCallback(() => {
-    pauseIntentRef.current = false;
     autoStartedFor.current = null;
     cancelEngine();
     dispatch({ type: "RESET" });
@@ -235,13 +225,10 @@ export function useUploader(props: FastPixUploaderProps): UploaderContextValue {
     netCbRef.current.onOffline?.();
   };
 
-  const handleOnline = () => {
-    dispatch({ type: "ONLINE" });
-    if (pauseIntentRef.current) {
-      try { engineRef.current?.pause(); } catch { /* noop */ }
-    }
-    netCbRef.current.onOnline?.();
-  };
+    const handleOnline = () => {
+      dispatch({ type: "ONLINE" });
+      netCbRef.current.onOnline?.();
+    };
 
   // Sync initial connectivity without firing a transition callback.
   if (globalThis.navigator !== undefined && !globalThis.navigator.onLine) {
