@@ -1,5 +1,6 @@
 "use client";
 import type { CSSProperties, ReactNode } from "react";
+
 import { useUploaderContext } from "../../core/context";
 
 export interface FastPixAbortButtonProps {
@@ -15,7 +16,7 @@ export function FastPixAbortButton({ className, style, children }: FastPixAbortB
   return (
     <button
       type="button"
-      className={["fpx-button", "fpx-abort-button", className].filter(Boolean).join(" ")}
+      className={["fastpix-button", "fastpix-abort-button", className].filter(Boolean).join(" ")}
       style={style}
       onClick={() => abort()}
       disabled={disabled || !active}

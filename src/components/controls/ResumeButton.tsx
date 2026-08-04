@@ -1,5 +1,6 @@
 "use client";
 import type { CSSProperties, ReactNode } from "react";
+
 import { useUploaderContext } from "../../core/context";
 
 export interface FastPixResumeButtonProps {
@@ -13,7 +14,7 @@ export function FastPixResumeButton({ className, style, children }: FastPixResum
   return (
     <button
       type="button"
-      className={["fpx-button", "fpx-resume-button", className].filter(Boolean).join(" ")}
+      className={["fastpix-button", "fastpix-resume-button", className].filter(Boolean).join(" ")}
       style={style}
       onClick={() => resume()}
       disabled={disabled || state !== "paused"}

@@ -1,190 +1,300 @@
-.fpx-uploader {
+.fastpix-uploader {
   /* ---- globals ---- */
-  --fpx-accent-color: #ff5b1a;
-  --fpx-bg: transparent;
-  --fpx-surface: #ffffff;
-  --fpx-text-color: #2f2f2f;
-  --fpx-text-muted: #8a8a8a;
-  --fpx-border-color: #333;
-  --fpx-border-color-hover: #555;
-  --fpx-radius: 8px;
-  --fpx-font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
-  --fpx-error-color: #ef4444;
-  --fpx-success-color: #22c55e;
-  --fpx-focus-ring: color-mix(in srgb, var(--fpx-accent-color) 50%, transparent);
-  --fpx-gap: 1rem;
-  --fpx-padding: 2rem;
-  --fpx-size: 1;
+  --fastpix-accent-color: #ff5b1a;
+  --fastpix-bg: transparent;
+  --fastpix-surface: #ffffff;
+  --fastpix-text-color: #2f2f2f;
+  --fastpix-text-muted: #8a8a8a;
+  --fastpix-border-color: #333;
+  --fastpix-border-color-hover: #555;
+  --fastpix-radius: 8px;
+  --fastpix-font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  --fastpix-error-color: #ef4444;
+  --fastpix-success-color: #22c55e;
+  --fastpix-focus-ring: color-mix(in srgb, var(--fastpix-accent-color) 50%, transparent);
+  --fastpix-gap: 1rem;
+  --fastpix-padding: 2rem;
+  --fastpix-size: 1;
 
   /* ---- track ---- */
-  --fpx-track-height: 8px;
-  --fpx-track-bg: #222;
-  --fpx-track-fill: var(--fpx-accent-color);
-  --fpx-track-radius: 999px;
-  --fpx-progress: 0%;
+  --fastpix-track-height: 8px;
+  --fastpix-track-bg: #222;
+  --fastpix-track-fill: var(--fastpix-accent-color);
+  --fastpix-track-radius: 999px;
+  --fastpix-progress: 0%;
 
   /* ---- dropzone ---- */
-  --fpx-dropzone-border: 2px dashed var(--fpx-border-color);
-  --fpx-dropzone-border-active: var(--fpx-accent-color);
-  --fpx-dropzone-bg: var(--fpx-surface);
-  --fpx-dropzone-bg-active: color-mix(in srgb, var(--fpx-accent-color) 6%, transparent);
-  --fpx-overlay-bg: rgba(0, 0, 0, 0.6);
+  --fastpix-dropzone-border: 2px dashed var(--fastpix-border-color);
+  --fastpix-dropzone-border-active: var(--fastpix-accent-color);
+  --fastpix-dropzone-bg: var(--fastpix-surface);
+  --fastpix-dropzone-bg-active: color-mix(in srgb, var(--fastpix-accent-color) 6%, transparent);
+  --fastpix-overlay-bg: rgba(0, 0, 0, 0.6);
 
   /* ---- buttons ---- */
-  --fpx-button-bg: var(--fpx-accent-color);
-  --fpx-button-text: #fff;
-  --fpx-button-bg-hover: color-mix(in srgb, var(--fpx-accent-color) 88%, #000);
-  --fpx-button-radius: var(--fpx-radius);
+  --fastpix-button-bg: var(--fastpix-accent-color);
+  --fastpix-button-text: #fff;
+  --fastpix-button-bg-hover: color-mix(in srgb, var(--fastpix-accent-color) 88%, #000);
+  --fastpix-button-radius: var(--fastpix-radius);
 
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  gap: var(--fpx-gap);
-  padding: var(--fpx-padding);
-  background: var(--fpx-bg);
-  color: var(--fpx-text-color);
-  font-family: var(--fpx-font-family);
-  font-size: calc(0.95rem * var(--fpx-size));
-  border-radius: var(--fpx-radius);
+  gap: var(--fastpix-gap);
+  padding: var(--fastpix-padding);
+  background: var(--fastpix-bg);
+  color: var(--fastpix-text-color);
+  font-family: var(--fastpix-font-family);
+  font-size: calc(0.95rem * var(--fastpix-size));
+  border-radius: var(--fastpix-radius);
 }
 
-.fpx-uploader *,
-.fpx-uploader *::before,
-.fpx-uploader *::after { box-sizing: border-box; }
+.fastpix-uploader *,
+.fastpix-uploader *::before,
+.fastpix-uploader *::after {
+  box-sizing: border-box;
+}
 
-.fpx-uploader[data-fpx-disabled] { opacity: 0.6; pointer-events: none; }
+.fastpix-uploader[data-fastpix-disabled] {
+  opacity: 0.6;
+  pointer-events: none;
+}
 
-/* size variants nudge spacing; --fpx-size scales type/controls via calc() */
-.fpx-uploader[data-fpx-size="sm"] { --fpx-padding: 1.25rem; --fpx-gap: 0.75rem; }
-.fpx-uploader[data-fpx-size="lg"] { --fpx-padding: 2.5rem;  --fpx-gap: 1.25rem; }
+/* size variants nudge spacing; --fastpix-size scales type/controls via calc() */
+.fastpix-uploader[data-fastpix-size="sm"] {
+  --fastpix-padding: 1.25rem;
+  --fastpix-gap: 0.75rem;
+}
+
+.fastpix-uploader[data-fastpix-size="lg"] {
+  --fastpix-padding: 2.5rem;
+  --fastpix-gap: 1.25rem;
+}
 
 /* ---------- file picker ---------- */
-.fpx-file-picker {
+.fastpix-file-picker {
   font: inherit;
-  color: var(--fpx-button-text);
-  background: var(--fpx-button-bg);
+  color: var(--fastpix-button-text);
+  background: var(--fastpix-button-bg);
   border: none;
-  border-radius: var(--fpx-button-radius);
-  padding: calc(0.5rem * var(--fpx-size)) calc(1rem * var(--fpx-size));
+  border-radius: var(--fastpix-button-radius);
+  padding: calc(0.5rem * var(--fastpix-size)) calc(1rem * var(--fastpix-size));
   cursor: pointer;
   transition: background 0.15s ease;
 }
-.fpx-file-picker:hover:not(:disabled) { background: var(--fpx-button-bg-hover); }
-.fpx-file-picker:disabled { cursor: not-allowed; opacity: 0.5; }
-.fpx-file-picker:focus-visible { outline: 3px solid var(--fpx-focus-ring); outline-offset: 2px; }
+
+.fastpix-file-picker:hover:not(:disabled) {
+  background: var(--fastpix-button-bg-hover);
+}
+
+.fastpix-file-picker:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.fastpix-file-picker:focus-visible {
+  outline: 3px solid var(--fastpix-focus-ring);
+  outline-offset: 2px;
+}
 
 /* ---------- dropzone ---------- */
-.fpx-dropzone-wrapper { position: relative; }
-.fpx-dropzone {
+.fastpix-dropzone-wrapper {
+  position: relative;
+}
+
+.fastpix-dropzone {
   /* button resets */
   appearance: none;
   width: 100%;
   font: inherit;
-  color: var(--fpx-text-color);
+  color: var(--fastpix-text-color);
   cursor: pointer;
   /* surface */
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: calc(0.75rem * var(--fpx-size));
-  padding: var(--fpx-padding);
-  border: var(--fpx-dropzone-border);
-  border-radius: var(--fpx-radius);
-  background: var(--fpx-dropzone-bg);
+  gap: calc(0.75rem * var(--fastpix-size));
+  padding: var(--fastpix-padding);
+  border: var(--fastpix-dropzone-border);
+  border-radius: var(--fastpix-radius);
+  background: var(--fastpix-dropzone-bg);
   text-align: center;
-  transition: border-color 0.15s ease, background 0.15s ease;
+  transition:
+    border-color 0.15s ease,
+    background 0.15s ease;
 }
-.fpx-dropzone:disabled { cursor: not-allowed; opacity: 0.6; }
-.fpx-dropzone:focus-visible { outline: 3px solid var(--fpx-focus-ring); outline-offset: 2px; }
-.fpx-dropzone[data-fpx-dragging] {
-  border-color: var(--fpx-dropzone-border-active);
-  background: var(--fpx-dropzone-bg-active);
+
+.fastpix-dropzone:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
 }
-.fpx-dropzone-overlay {
+
+.fastpix-dropzone:focus-visible {
+  outline: 3px solid var(--fastpix-focus-ring);
+  outline-offset: 2px;
+}
+
+.fastpix-dropzone[data-fastpix-dragging] {
+  border-color: var(--fastpix-dropzone-border-active);
+  background: var(--fastpix-dropzone-bg-active);
+}
+
+.fastpix-dropzone-overlay {
   position: absolute;
   inset: 0;
-  border-radius: var(--fpx-radius);
-  background: var(--fpx-overlay-bg);
+  border-radius: var(--fastpix-radius);
+  background: var(--fastpix-overlay-bg);
   pointer-events: none;
 }
 
 /* ---------- track (linear) ---------- */
-.fpx-track { display: flex; align-items: center; gap: 0.75rem; width: 100%; }
-.fpx-track-bar {
+.fastpix-track {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+}
+
+.fastpix-track-bar {
   flex: 1;
-  height: var(--fpx-track-height);
-  background: var(--fpx-track-bg);
-  border-radius: var(--fpx-track-radius);
+  height: var(--fastpix-track-height);
+  background: var(--fastpix-track-bg);
+  border-radius: var(--fastpix-track-radius);
   overflow: hidden;
 }
-.fpx-track-fill {
+
+.fastpix-track-fill {
   height: 100%;
-  width: var(--fpx-progress);
-  background: var(--fpx-track-fill);
+  width: var(--fastpix-progress);
+  background: var(--fastpix-track-fill);
   border-radius: inherit;
   transition: width 0.3s ease;
 }
-.fpx-track-label {
+
+.fastpix-track-label {
   font-variant-numeric: tabular-nums;
-  color: var(--fpx-text-muted);
+  color: var(--fastpix-text-muted);
   font-size: 0.85em;
   min-width: 3ch;
   text-align: right;
 }
-.fpx-uploader[data-fpx-state="error"]   .fpx-track-fill { background: var(--fpx-error-color); }
-.fpx-uploader[data-fpx-state="success"] .fpx-track-fill { background: var(--fpx-success-color); }
+
+.fastpix-uploader[data-fastpix-state="error"] .fastpix-track-fill {
+  background: var(--fastpix-error-color);
+}
+
+.fastpix-uploader[data-fastpix-state="success"] .fastpix-track-fill {
+  background: var(--fastpix-success-color);
+}
 
 /* ---------- track (radial) ---------- */
-.fpx-track-radial { position: relative; width: calc(72px * var(--fpx-size)); height: calc(72px * var(--fpx-size)); }
-.fpx-radial-svg { width: 100%; height: 100%; transform: rotate(-90deg); }
-.fpx-radial-bg, .fpx-radial-fill { fill: none; stroke-width: 8; }
-.fpx-radial-bg { stroke: var(--fpx-track-bg); }
-.fpx-radial-fill {
-  stroke: var(--fpx-track-fill);
+.fastpix-track-radial {
+  position: relative;
+  width: calc(72px * var(--fastpix-size));
+  height: calc(72px * var(--fastpix-size));
+}
+
+.fastpix-radial-svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.fastpix-radial-bg,
+.fastpix-radial-fill {
+  fill: none;
+  stroke-width: 8;
+}
+
+.fastpix-radial-bg {
+  stroke: var(--fastpix-track-bg);
+}
+
+.fastpix-radial-fill {
+  stroke: var(--fastpix-track-fill);
   stroke-linecap: round;
   transition: stroke-dashoffset 0.3s ease;
 }
-.fpx-track-radial .fpx-track-label {
-  position: absolute; inset: 0;
-  display: flex; align-items: center; justify-content: center;
+
+.fastpix-track-radial .fastpix-track-label {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* ---------- status ---------- */
-.fpx-status { color: var(--fpx-text-muted); font-size: 0.9em; }
-.fpx-status[data-fpx-state="error"]   { color: var(--fpx-error-color); }
-.fpx-status[data-fpx-state="success"] { color: var(--fpx-success-color); }
+.fastpix-status {
+  color: var(--fastpix-text-muted);
+  font-size: 0.9em;
+}
+
+.fastpix-status[data-fastpix-state="error"] {
+  color: var(--fastpix-error-color);
+}
+
+.fastpix-status[data-fastpix-state="success"] {
+  color: var(--fastpix-success-color);
+}
 
 /* ---------- buttons ---------- */
-.fpx-button {
+.fastpix-button {
   font: inherit;
-  color: var(--fpx-button-text);
-  background: var(--fpx-button-bg);
+  color: var(--fastpix-button-text);
+  background: var(--fastpix-button-bg);
   border: none;
-  border-radius: var(--fpx-button-radius);
-  padding: calc(0.5rem * var(--fpx-size)) calc(1.1rem * var(--fpx-size));
+  border-radius: var(--fastpix-button-radius);
+  padding: calc(0.5rem * var(--fastpix-size)) calc(1.1rem * var(--fastpix-size));
   cursor: pointer;
-  transition: background 0.15s ease, opacity 0.15s ease;
+  transition:
+    background 0.15s ease,
+    opacity 0.15s ease;
 }
-.fpx-button:hover:not(:disabled) { background: var(--fpx-button-bg-hover); }
-.fpx-button:disabled { cursor: not-allowed; opacity: 0.45; }
-.fpx-button:focus-visible { outline: 3px solid var(--fpx-focus-ring); outline-offset: 2px; }
+
+.fastpix-button:hover:not(:disabled) {
+  background: var(--fastpix-button-bg-hover);
+}
+
+.fastpix-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.fastpix-button:focus-visible {
+  outline: 3px solid var(--fastpix-focus-ring);
+  outline-offset: 2px;
+}
 
 /* abort = quieter, secondary */
-.fpx-abort-button {
+.fastpix-abort-button {
   background: transparent;
-  color: var(--fpx-text-muted);
-  border: 1px solid var(--fpx-border-color);
+  color: var(--fastpix-text-muted);
+  border: 1px solid var(--fastpix-border-color);
 }
-.fpx-abort-button:hover:not(:disabled) {
+
+.fastpix-abort-button:hover:not(:disabled) {
   background: transparent;
-  border-color: var(--fpx-border-color-hover);
-  color: var(--fpx-text-color);
+  border-color: var(--fastpix-border-color-hover);
+  color: var(--fastpix-text-color);
 }
 
 /* ---------- default layout ---------- */
-.fpx-default { display: flex; flex-direction: column; gap: var(--fpx-gap); }
-.fpx-default-progress,
-.fpx-default-error,
-.fpx-default-success { display: flex; flex-direction: column; gap: calc(0.75rem * var(--fpx-size)); }
-.fpx-controls { display: flex; gap: 0.5rem; }
+.fastpix-default {
+  display: flex;
+  flex-direction: column;
+  gap: var(--fastpix-gap);
+}
+
+.fastpix-default-progress,
+.fastpix-default-error,
+.fastpix-default-success {
+  display: flex;
+  flex-direction: column;
+  gap: calc(0.75rem * var(--fastpix-size));
+}
+
+.fastpix-controls {
+  display: flex;
+  gap: 0.5rem;
+}

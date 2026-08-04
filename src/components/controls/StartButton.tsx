@@ -1,5 +1,6 @@
 "use client";
 import type { CSSProperties, ReactNode } from "react";
+
 import { useUploaderContext } from "../../core/context";
 
 export interface FastPixStartButtonProps {
@@ -15,7 +16,7 @@ export function FastPixStartButton({ className, style, children }: FastPixStartB
   return (
     <button
       type="button"
-      className={["fpx-button", "fpx-start-button", className].filter(Boolean).join(" ")}
+      className={["fastpix-button", "fastpix-start-button", className].filter(Boolean).join(" ")}
       style={style}
       onClick={() => start()}
       disabled={disabled || !canStart}

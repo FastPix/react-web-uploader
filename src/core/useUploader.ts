@@ -1,28 +1,61 @@
 "use client";
 import { useCallback, useEffect, useReducer, useRef } from "react";
+
 import { Uploader as Engine } from "@fastpix/resumable-uploads";
-import { reducer, initialState, ACTIVE } from "./reducer";
-import type { FastPixUploaderProps, UploaderContextValue, FileRejection } from "../types";
-import { validateConfig, checkFileReadable } from "./validate";
+import { ACTIVE, initialState, reducer } from "./reducer";
+import { checkFileReadable, validateConfig } from "./validate";
+
+import type { 
+  FastPixUploaderProps, 
+  FileRejection, 
+  UploaderContextValue
+} from "../types";
 
 function busyRejection(name: string): FileRejection {
-  return { reason: "busy", message: `An upload is already in progress. Cancel it before selecting "${name}".` };
+  return {
+    reason: "busy",
+    message: `An upload is already in progress. Cancel it before selecting "${name}".`,
+  };
 }
 
 export function useUploader(props: FastPixUploaderProps): UploaderContextValue {
   const {
-    endpoint, file: fileProp, autoStart = true, accept, maxFileSize,
-    chunkSize, retryChunkAttempt, delayRetry, disabled = false,
-    onFileSelect, onFileReject, onUploadStart, onProgress,
-    onChunkAttempt, onChunkSuccess, onChunkAttemptFailure, 
-    onPause, onResume, onAbort, onError, onSuccess, onStateChange,
-    onOffline, onOnline,
+    endpoint,
+    file: fileProp,
+    autoStart = true,
+    accept,
+    maxFileSize,
+    chunkSize,
+    retryChunkAttempt,
+    delayRetry,
+    disabled = false,
+    onFileSelect,
+    onFileReject,
+    onUploadStart,
+    onProgress,
+    onChunkAttempt,
+    onChunkSuccess,
+    onChunkAttemptFailure,
+    onPause,
+    onResume,
+    onAbort,
+    onError,
+    onSuccess,
+    onStateChange,
+    onOffline,
+    onOnline,
   } = props;
 
   const [state, dispatch] = useReducer(reducer, initialState);
 
   const netCbRef = useRef({ onOnline, onOffline });
   netCbRef.current = { onOnline, onOffline };
+
+  const propsRef = useRef(props);
+  propsRef.current = props;
+
+  const onStateChangeRef = useRef(onStateChange);
+  onStateChangeRef.current = onStateChange;
 
   const stateRef = useRef(state);
   stateRef.current = state;
@@ -38,56 +71,66 @@ export function useUploader(props: FastPixUploaderProps): UploaderContextValue {
   }, []);
 
   const cancelEngine = useCallback(() => {
-    try { engineRef.current?.abort(); } catch { /* noop */ }
+    try {
+      engineRef.current?.abort();
+    } catch {
+      /* noop */
+    }
     clearEngine();
   }, [clearEngine]);
 
-  const selectFile = useCallback(async (f: File) => {
-    if (disabled) return;
+  const selectFile = useCallback(
+    async (f: File) => {
+      if (disabled) return;
 
-    if (ACTIVE.has(stateRef.current.status)) { 
-      onFileReject?.(f, busyRejection(f.name)); 
-      return; 
-    }
+      if (ACTIVE.has(stateRef.current.status)) {
+        onFileReject?.(f, busyRejection(f.name));
+        return;
+      }
 
-    const access = await checkFileReadable(f);
-    if (!access.ok) {
-      onFileReject?.(f, { reason: "unreadable", message: access.message });
-      return;
-    }
+      const access = await checkFileReadable(f);
+      if (!access.ok) {
+        onFileReject?.(f, { reason: "unreadable", message: access.message });
+        return;
+      }
 
-    if (ACTIVE.has(stateRef.current.status)) { 
-      onFileReject?.(f, busyRejection(f.name)); 
-      return; 
-    }
+      if (ACTIVE.has(stateRef.current.status)) {
+        onFileReject?.(f, busyRejection(f.name));
+        return;
+      }
 
-    if (accept && !matchesAccept(f, accept)) {
-      onFileReject?.(f, {
-        reason: "type",
-        message: `${f.name} is not an accepted file type. Allowed: ${accept}.`,
-      });
-      return;
-    }
+      if (accept && !matchesAccept(f, accept)) {
+        onFileReject?.(f, {
+          reason: "type",
+          message: `${f.name} is not an accepted file type. Allowed: ${accept}.`,
+        });
+        return;
+      }
 
-    if (maxFileSize != null && f.size > maxFileSize * 1024) {
-      const limitMB = (maxFileSize / 1024).toFixed(1);
-      const fileMB = (f.size / (1024 * 1024)).toFixed(1);
-      onFileReject?.(f, {
-        reason: "size",
-        message: `"${f.name}" is ${fileMB} MB, which exceeds the ${limitMB} MB limit.`,
-      });
-      return;
-    }
+      if (maxFileSize != null && f.size > maxFileSize * 1024) {
+        const limitMB = (maxFileSize / 1024).toFixed(1);
+        const fileMB = (f.size / (1024 * 1024)).toFixed(1);
+        onFileReject?.(f, {
+          reason: "size",
+          message: `"${f.name}" is ${fileMB} MB, which exceeds the ${limitMB} MB limit.`,
+        });
+        return;
+      }
 
       autoStartedFor.current = null;
       dispatch({ type: "SELECT_FILE", file: f });
       onFileSelect?.(f);
-  }, [disabled, accept, maxFileSize, onFileReject, onFileSelect]);
+    },
+    [disabled, accept, maxFileSize, onFileReject, onFileSelect],
+  );
+
+  const selectFileRef = useRef(selectFile);
+  selectFileRef.current = selectFile;
 
   const start = useCallback(async () => {
     if (disabled) return;
 
-    const configError = validateConfig(props);
+    const configError = validateConfig(propsRef.current);
     if (configError) {
       dispatch({ type: "ERROR", error: { message: configError } });
       onError?.({ message: configError });
@@ -115,7 +158,10 @@ export function useUploader(props: FastPixUploaderProps): UploaderContextValue {
       if (typeof url !== "string" || url.trim() === "") {
         throw new Error("endpoint did not resolve to a valid URL");
       }
-      if (!mountedRef.current) { startingRef.current = false; return; }
+      if (!mountedRef.current) {
+        startingRef.current = false;
+        return;
+      }
 
       dispatch({ type: "UPLOAD_START" });
 
@@ -128,14 +174,14 @@ export function useUploader(props: FastPixUploaderProps): UploaderContextValue {
       });
       engineRef.current = engine;
 
-      engine.on("progress", (e: any) => {
+      engine.on("progress", (e: CustomEvent) => {
         if (stateRef.current.status === "paused") return;
         const value = Math.round(e?.detail?.progress ?? 0);
         dispatch({ type: "PROGRESS", value });
         onProgress?.(value);
       });
 
-      engine.on("chunkAttempt", (e: any) => {
+      engine.on("chunkAttempt", (e: CustomEvent) => {
         const d = e?.detail ?? {};
         onChunkAttempt?.({
           chunkNumber: d.chunkNumber ?? 0,
@@ -144,7 +190,7 @@ export function useUploader(props: FastPixUploaderProps): UploaderContextValue {
         });
       });
 
-      engine.on("chunkSuccess", (e: any) => {
+      engine.on("chunkSuccess", (e: CustomEvent) => {
         const d = e?.detail ?? {};
         onChunkSuccess?.({
           chunkNumber: d.chunkNumber ?? 0,
@@ -153,7 +199,7 @@ export function useUploader(props: FastPixUploaderProps): UploaderContextValue {
         });
       });
 
-      engine.on("chunkAttemptFailure", (e: any) => {
+      engine.on("chunkAttemptFailure", (e: CustomEvent) => {
         const d = e?.detail ?? {};
         onChunkAttemptFailure?.({
           chunkNumber: d.chunkNumber ?? 0,
@@ -168,9 +214,13 @@ export function useUploader(props: FastPixUploaderProps): UploaderContextValue {
         onSuccess?.();
       });
 
-      engine.on("error", (e: any) => {
+      engine.on("error", (e: CustomEvent) => {
         const message = e?.detail?.message ?? "Upload failed";
-        try { engine.abort(); } catch { /* detach listeners, kill session */ }
+        try {
+          engine.abort();
+        } catch {
+          /* detach listeners, kill session */
+        }
         clearEngine();
         dispatch({ type: "ERROR", error: { message } });
         onError?.({ message });
@@ -183,23 +233,43 @@ export function useUploader(props: FastPixUploaderProps): UploaderContextValue {
       dispatch({ type: "ERROR", error: { message } });
       onError?.({ message });
     }
-  }, [disabled, endpoint, chunkSize, retryChunkAttempt, delayRetry,
-    clearEngine, onProgress, onSuccess, onError, onUploadStart,
-    onChunkAttempt, onChunkSuccess, onChunkAttemptFailure]);
+  }, [
+    disabled,
+    endpoint,
+    chunkSize,
+    retryChunkAttempt,
+    delayRetry,
+    clearEngine,
+    onProgress,
+    onSuccess,
+    onError,
+    onUploadStart,
+    onChunkAttempt,
+    onChunkSuccess,
+    onChunkAttemptFailure,
+  ]);
 
   const startRef = useRef(start);
   startRef.current = start;
 
   const pause = useCallback(() => {
     if (stateRef.current.status !== "uploading") return;
-    try { engineRef.current?.pause(); } catch { /* noop */ }
+    try {
+      engineRef.current?.pause();
+    } catch {
+      /* noop */
+    }
     dispatch({ type: "PAUSE" });
     onPause?.();
   }, [onPause]);
 
   const resume = useCallback(async () => {
     if (stateRef.current.status !== "paused") return;
-    try { await engineRef.current?.resume(); } catch { /* noop */ }
+    try {
+      await engineRef.current?.resume();
+    } catch {
+      /* noop */
+    }
     dispatch({ type: "RESUME" });
     onResume?.();
   }, [onResume]);
@@ -218,34 +288,34 @@ export function useUploader(props: FastPixUploaderProps): UploaderContextValue {
   }, [cancelEngine]);
 
   useEffect(() => {
-  if (globalThis.window === undefined) return;
+    if (globalThis.window === undefined) return;
 
-  const handleOffline = () => {
-    dispatch({ type: "OFFLINE" });
-    netCbRef.current.onOffline?.();
-  };
+    const handleOffline = () => {
+      dispatch({ type: "OFFLINE" });
+      netCbRef.current.onOffline?.();
+    };
 
     const handleOnline = () => {
       dispatch({ type: "ONLINE" });
       netCbRef.current.onOnline?.();
     };
 
-  // Sync initial connectivity without firing a transition callback.
-  if (globalThis.navigator !== undefined && !globalThis.navigator.onLine) {
-    dispatch({ type: "OFFLINE" });
-  }
+    // Sync initial connectivity without firing a transition callback.
+    if (globalThis.navigator !== undefined && !globalThis.navigator.onLine) {
+      dispatch({ type: "OFFLINE" });
+    }
 
-  globalThis.window.addEventListener("offline", handleOffline);
-  globalThis.window.addEventListener("online", handleOnline);
+    globalThis.window.addEventListener("offline", handleOffline);
+    globalThis.window.addEventListener("online", handleOnline);
 
-  return () => {
-    globalThis.window.removeEventListener("offline", handleOffline);
-    globalThis.window.removeEventListener("online", handleOnline);
-  };
-}, []);
+    return () => {
+      globalThis.window.removeEventListener("offline", handleOffline);
+      globalThis.window.removeEventListener("online", handleOnline);
+    };
+  }, []);
 
   useEffect(() => {
-    if (fileProp) selectFile(fileProp);
+    if (fileProp) selectFileRef.current(fileProp);
   }, [fileProp]);
 
   useEffect(() => {
@@ -259,14 +329,18 @@ export function useUploader(props: FastPixUploaderProps): UploaderContextValue {
   }, [autoStart, state.status]);
 
   useEffect(() => {
-    onStateChange?.(state.status);
+    onStateChangeRef.current?.(state.status);
   }, [state.status]);
 
   useEffect(() => {
     mountedRef.current = true;
     return () => {
       mountedRef.current = false;
-      try { engineRef.current?.abort(); } catch { /* noop */ }
+      try {
+        engineRef.current?.abort();
+      } catch {
+        /* noop */
+      }
       engineRef.current = null;
       startingRef.current = false;
     };
@@ -279,24 +353,33 @@ export function useUploader(props: FastPixUploaderProps): UploaderContextValue {
     error: state.error,
     isOffline: state.isOffline,
     busy: ACTIVE.has(state.status),
-    disabled, accept,
-    selectFile, start, pause, resume, abort, reset,
+    disabled,
+    accept,
+    selectFile,
+    start,
+    pause,
+    resume,
+    abort,
+    reset,
   };
 }
 
 // "video/*", ".mp4", "video/mp4", or comma-separated lists
 function matchesAccept(file: File, accept: string): boolean {
-  const tokens = accept.split(",").map((t) => t.trim().toLowerCase()).filter(Boolean);
+  const tokens = accept
+    .split(",")
+    .map((t) => t.trim().toLowerCase())
+    .filter(Boolean);
   if (tokens.length === 0) return true;
 
   const extensionToMimeFallback: Record<string, string> = {
-    '.mkv': 'video/x-matroska',
-    '.avi': 'video/x-msvideo',
-    '.mov': 'video/quicktime',
+    ".mkv": "video/x-matroska",
+    ".avi": "video/x-msvideo",
+    ".mov": "video/quicktime",
   };
 
   const fileName = file.name.toLowerCase();
-  const fileExt = fileName.substring(fileName.lastIndexOf('.'));
+  const fileExt = fileName.substring(fileName.lastIndexOf("."));
   const fileType = file.type.toLowerCase() || extensionToMimeFallback[fileExt] || "";
 
   return tokens.some((t) => {

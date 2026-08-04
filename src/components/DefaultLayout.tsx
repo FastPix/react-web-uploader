@@ -1,12 +1,12 @@
 "use client";
 import { useUploaderContext } from "../core/context";
-import { FastPixDropZone } from "./input/DropZone";
-import { FastPixTrack } from "./feedback/Track";
-import { FastPixStatus } from "./feedback/Status";
-import { FastPixStartButton } from "./controls/StartButton";
+import { FastPixAbortButton } from "./controls/AbortButton";
 import { FastPixPauseButton } from "./controls/PauseButton";
 import { FastPixResumeButton } from "./controls/ResumeButton";
-import { FastPixAbortButton } from "./controls/AbortButton";
+import { FastPixStartButton } from "./controls/StartButton";
+import { FastPixStatus } from "./feedback/Status";
+import { FastPixTrack } from "./feedback/Track";
+import { FastPixDropZone } from "./input/DropZone";
 
 export function DefaultLayout() {
   const { state } = useUploaderContext();
@@ -14,24 +14,24 @@ export function DefaultLayout() {
   const isActive = state === "resolving" || state === "uploading" || state === "paused";
 
   return (
-    <div className="fpx-default">
+    <div className="fastpix-default">
       {isPicking && (
-        <FastPixDropZone overlay className="fpx-default-drop">
-          <FastPixStatus className="fpx-default-hint" />
+        <FastPixDropZone overlay className="fastpix-default-drop">
+          <FastPixStatus className="fastpix-default-hint" />
         </FastPixDropZone>
       )}
 
       {state === "ready" && (
-        <div className="fpx-controls">
+        <div className="fastpix-controls">
           <FastPixStartButton />
         </div>
       )}
 
       {isActive && (
-        <div className="fpx-default-progress">
+        <div className="fastpix-default-progress">
           <FastPixStatus />
           <FastPixTrack showLabel />
-          <div className="fpx-controls">
+          <div className="fastpix-controls">
             {state === "paused" ? <FastPixResumeButton /> : <FastPixPauseButton />}
             <FastPixAbortButton />
           </div>
@@ -39,14 +39,14 @@ export function DefaultLayout() {
       )}
 
       {state === "error" && (
-        <div className="fpx-default-error">
+        <div className="fastpix-default-error">
           <FastPixStatus />
           <FastPixStartButton>Retry</FastPixStartButton>
         </div>
       )}
 
       {state === "success" && (
-        <div className="fpx-default-success">
+        <div className="fastpix-default-success">
           <FastPixStatus />
         </div>
       )}

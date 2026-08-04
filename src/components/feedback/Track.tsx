@@ -1,5 +1,6 @@
 "use client";
 import type { CSSProperties } from "react";
+
 import { useUploaderContext } from "../../core/context";
 
 export interface FastPixTrackProps {
@@ -9,7 +10,12 @@ export interface FastPixTrackProps {
   readonly showLabel?: boolean;
 }
 
-export function FastPixTrack({ className, style, variant = "linear", showLabel }: FastPixTrackProps) {
+export function FastPixTrack({
+  className,
+  style,
+  variant = "linear",
+  showLabel,
+}: FastPixTrackProps) {
   const { progress } = useUploaderContext();
   const pct = Math.min(100, Math.max(0, Math.round(progress)));
 
@@ -18,27 +24,32 @@ export function FastPixTrack({ className, style, variant = "linear", showLabel }
     const circumference = 2 * Math.PI * r;
     const offset = circumference * (1 - pct / 100);
     return (
-      <div className={["fpx-track", "fpx-track-radial", className].filter(Boolean).join(" ")} style={style}>
-        <svg viewBox="0 0 100 100" className="fpx-radial-svg">
-          <circle className="fpx-radial-bg" cx="50" cy="50" r={r} />
+      <div
+        className={["fastpix-track", "fastpix-track-radial", className].filter(Boolean).join(" ")}
+        style={style}
+      >
+        <svg viewBox="0 0 100 100" className="fastpix-radial-svg">
+          <circle className="fastpix-radial-bg" cx="50" cy="50" r={r} />
           <circle
-            className="fpx-radial-fill"
-            cx="50" cy="50" r={r}
+            className="fastpix-radial-fill"
+            cx="50"
+            cy="50"
+            r={r}
             strokeDasharray={circumference}
             strokeDashoffset={offset}
           />
         </svg>
-        {showLabel && <span className="fpx-track-label">{pct}%</span>}
+        {showLabel && <span className="fastpix-track-label">{pct}%</span>}
       </div>
     );
   }
 
   return (
-    <div className={["fpx-track", className].filter(Boolean).join(" ")} style={style}>
-      <div className="fpx-track-bar">
-        <div className="fpx-track-fill" /> {/* width: var(--fpx-progress) — set in CSS */}
+    <div className={["fastpix-track", className].filter(Boolean).join(" ")} style={style}>
+      <div className="fastpix-track-bar">
+        <div className="fastpix-track-fill" /> {/* width: var(--fastpix-progress) — set in CSS */}
       </div>
-      {showLabel && <span className="fpx-track-label">{pct}%</span>}
+      {showLabel && <span className="fastpix-track-label">{pct}%</span>}
     </div>
   );
 }

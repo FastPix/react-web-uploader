@@ -1,5 +1,6 @@
 "use client";
 import type { CSSProperties, ReactNode } from "react";
+
 import { useUploaderContext } from "../../core/context";
 
 export interface FastPixPauseButtonProps {
@@ -13,7 +14,7 @@ export function FastPixPauseButton({ className, style, children }: FastPixPauseB
   return (
     <button
       type="button"
-      className={["fpx-button", "fpx-pause-button", className].filter(Boolean).join(" ")}
+      className={["fastpix-button", "fastpix-pause-button", className].filter(Boolean).join(" ")}
       style={style}
       onClick={() => pause()}
       disabled={disabled || state !== "uploading"}

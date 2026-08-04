@@ -1,6 +1,7 @@
 "use client";
-import { useRef, useState } from "react";
 import type { ChangeEvent, CSSProperties, DragEvent, ReactNode } from "react";
+import { useRef, useState } from "react";
+
 import { useUploaderContext } from "../../core/context";
 
 export interface FastPixDropZoneProps {
@@ -25,8 +26,13 @@ export function FastPixDropZone({
   const depth = useRef(0);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const reset = () => { depth.current = 0; setDragging(false); };
-  const browse = () => { if (!blocked) inputRef.current?.click(); };
+  const reset = () => {
+    depth.current = 0;
+    setDragging(false);
+  };
+  const browse = () => {
+    if (!blocked) inputRef.current?.click();
+  };
 
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
     const f = e.target.files?.[0];
@@ -40,7 +46,9 @@ export function FastPixDropZone({
     depth.current += 1;
     setDragging(true);
   };
-  const onDragOver = (e: DragEvent<HTMLButtonElement>) => { e.preventDefault(); };
+  const onDragOver = (e: DragEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+  };
   const onDragLeave = (e: DragEvent<HTMLButtonElement>) => {
     e.preventDefault();
     if (blocked) return;
@@ -56,14 +64,14 @@ export function FastPixDropZone({
   };
 
   return (
-    <div className="fpx-dropzone-wrapper">
+    <div className="fastpix-dropzone-wrapper">
       <button
         type="button"
-        className={["fpx-dropzone", className].filter(Boolean).join(" ")}
+        className={["fastpix-dropzone", className].filter(Boolean).join(" ")}
         style={style}
         disabled={blocked}
         aria-label={label}
-        data-fpx-dragging={dragging ? "" : undefined}
+        data-fastpix-dragging={dragging ? "" : undefined}
         onClick={browse}
         onDragEnter={onDragEnter}
         onDragOver={onDragOver}
@@ -73,7 +81,7 @@ export function FastPixDropZone({
         {children}
       </button>
       <input ref={inputRef} type="file" accept={accept} hidden onChange={onChange} />
-      {overlay && dragging && <div className="fpx-dropzone-overlay" aria-hidden="true" />}
+      {overlay && dragging && <div className="fastpix-dropzone-overlay" aria-hidden="true" />}
     </div>
   );
 }
