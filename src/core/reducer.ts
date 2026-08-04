@@ -58,8 +58,8 @@ export function reducer(state: InternalState, action: Action): InternalState {
     case "SUCCESS":      return { ...state, status: "success", progress: 100 };
     case "ERROR":        return { ...state, status: "error", error: action.error };
     case "RESET":        return { ...initialState, isOffline: state.isOffline };
-    case "OFFLINE":      return { ...state, isOffline: true };
-    case "ONLINE":       return { ...state, isOffline: false };
+    case "OFFLINE":      return state.isOffline ? state : { ...state, isOffline: true };
+    case "ONLINE":       return state.isOffline ? { ...state, isOffline: false } : state;
     default:             return state;
   }
 }
