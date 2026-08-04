@@ -1,6 +1,7 @@
 "use client";
-import { useRef } from "react";
 import type { ChangeEvent, CSSProperties, ReactNode } from "react";
+import { useRef } from "react";
+
 import { useUploaderContext } from "../../core/context";
 
 export interface FastPixFilePickerProps {
@@ -25,11 +26,11 @@ export function FastPixFilePicker({ className, style, children }: FastPixFilePic
     <>
       <button
         type="button"
-        className={["fpx-file-picker", className].filter(Boolean).join(" ")}
+        className={["fastpix-file-picker", className].filter(Boolean).join(" ")}
         style={style}
         onClick={() => !blocked && inputRef.current?.click()}
         disabled={blocked}
-        data-fpx-disabled={blocked ? "" : undefined}
+        data-fastpix-disabled={blocked ? "" : undefined}
       >
         {children ?? "Browse…"}
       </button>

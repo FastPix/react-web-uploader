@@ -1,9 +1,11 @@
 "use client";
-import { forwardRef, useImperativeHandle } from "react";
 import type { CSSProperties } from "react";
+import { forwardRef, useImperativeHandle } from "react";
+
 import { UploaderProvider } from "../core/context";
-import { DefaultLayout } from "./DefaultLayout";
 import { useUploader } from "../core/useUploader";
+import { DefaultLayout } from "./DefaultLayout";
+
 import type {
   FastPixUploaderProps,
   FastPixUploaderRef,
@@ -29,47 +31,47 @@ export const FastPixUploader = forwardRef<FastPixUploaderRef, FastPixUploaderPro
         getState: () => ctx.state,
         getFile: () => ctx.file,
       }),
-      [ctx]
+      [ctx],
     );
 
     const hostStyle = {
       ...appearanceToVars(appearance),
-      "--fpx-size": SIZE_SCALE[size],
-      "--fpx-progress": `${ctx.progress}%`,
+      "--fastpix-size": SIZE_SCALE[size],
+      "--fastpix-progress": `${ctx.progress}%`,
       ...style,
     } as CSSProperties;
 
     return (
       <UploaderProvider value={ctx}>
         <div
-          className={["fpx-uploader", className].filter(Boolean).join(" ")}
+          className={["fastpix-uploader", className].filter(Boolean).join(" ")}
           style={hostStyle}
-          data-fpx-state={ctx.state}
-          data-fpx-size={size}
-          data-fpx-disabled={ctx.disabled ? "" : undefined}
+          data-fastpix-state={ctx.state}
+          data-fastpix-size={size}
+          data-fastpix-disabled={ctx.disabled ? "" : undefined}
         >
           {children ?? <DefaultLayout />}
         </div>
       </UploaderProvider>
     );
-  }
+  },
 );
 
 function appearanceToVars(appearance?: FastPixAppearance): Record<string, string> {
   if (!appearance) return {};
   const map: Record<keyof FastPixAppearance, string> = {
-    accentColor: "--fpx-accent-color",
-    background: "--fpx-bg",
-    surface: "--fpx-surface",
-    textColor: "--fpx-text-color",
-    mutedColor: "--fpx-text-muted",
-    borderColor: "--fpx-border-color",
-    radius: "--fpx-radius",
-    fontFamily: "--fpx-font-family",
-    trackHeight: "--fpx-track-height",
-    trackFill: "--fpx-track-fill",
-    errorColor: "--fpx-error-color",
-    successColor: "--fpx-success-color",
+    accentColor: "--fastpix-accent-color",
+    background: "--fastpix-bg",
+    surface: "--fastpix-surface",
+    textColor: "--fastpix-text-color",
+    mutedColor: "--fastpix-text-muted",
+    borderColor: "--fastpix-border-color",
+    radius: "--fastpix-radius",
+    fontFamily: "--fastpix-font-family",
+    trackHeight: "--fastpix-track-height",
+    trackFill: "--fastpix-track-fill",
+    errorColor: "--fastpix-error-color",
+    successColor: "--fastpix-success-color",
   };
   const out: Record<string, string> = {};
   (Object.keys(appearance) as (keyof FastPixAppearance)[]).forEach((k) => {

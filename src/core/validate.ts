@@ -11,10 +11,13 @@ function describe(v: unknown): string {
   if (v === null) return "null";
   if (typeof v === "string") return `"${v}"`;
   if (typeof v === "object") {
-    try { return `${typeof v} (${JSON.stringify(v)})`; }
-    catch { return `${typeof v} (unserializable)`; }
+    try {
+      return `${typeof v} (${JSON.stringify(v)})`;
+    } catch {
+      return `${typeof v} (unserializable)`;
+    }
   }
-  // eslint-disable-next-line @typescript-eslint/no-base-to-string
+
   return `${typeof v} (${String(v)})`; // NOSONAR
 }
 
@@ -34,7 +37,8 @@ function validChunkSize(v: unknown): string | null {
 
 function validPositive(name: string, v: unknown, unit: string): string | null {
   if (v === undefined) return null;
-  if (!isFiniteNumber(v) || v <= 0) return `${name} must be a positive number in ${unit}; received ${describe(v)}`;
+  if (!isFiniteNumber(v) || v <= 0)
+    return `${name} must be a positive number in ${unit}; received ${describe(v)}`;
   return null;
 }
 
@@ -46,7 +50,8 @@ function validNonNegInt(name: string, v: unknown): string | null {
 
 function validNonNeg(name: string, v: unknown, unit: string): string | null {
   if (v === undefined) return null;
-  if (!isFiniteNumber(v) || v < 0) return `${name} must be a non-negative number in ${unit}; received ${describe(v)}`;
+  if (!isFiniteNumber(v) || v < 0)
+    return `${name} must be a non-negative number in ${unit}; received ${describe(v)}`;
   return null;
 }
 
@@ -116,7 +121,6 @@ export async function checkFileReadable(file: File): Promise<FileAccessResult> {
 }
 
 function detectClient(): { browser: string; os: string } {
-  // eslint-disable-next-line sonarjs/no-negated-condition
   const ua = typeof navigator !== "undefined" ? navigator.userAgent : "";
   return { browser: detectBrowser(ua), os: detectOS(ua) };
 }
@@ -130,7 +134,7 @@ const OS_TABLE: ReadonlyArray<[RegExp, string]> = [
 ];
 
 const BROWSER_TABLE: ReadonlyArray<[RegExp, string]> = [
-  [/Edg\//i, "Edge"],       // must precede Chrome — Edge UA contains "Chrome"
+  [/Edg\//i, "Edge"], // must precede Chrome — Edge UA contains "Chrome"
   [/Chrome\//i, "Chrome"],
   [/Firefox\//i, "Firefox"],
   [/Safari\//i, "Safari"],

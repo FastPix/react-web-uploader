@@ -1,9 +1,18 @@
 import type { CSSProperties, ReactNode } from "react";
 
+// prettier-ignore
 export type UploaderState =
-  | "idle" | "ready" | "resolving" | "uploading" | "paused" | "error" | "success";
+  | "idle"
+  | "ready"
+  | "resolving"
+  | "uploading"
+  | "paused"
+  | "error"
+  | "success";
 
-export interface UploaderError { message: string; }
+export interface UploaderError {
+  message: string;
+}
 
 export type EndpointResolver = (file: File) => string | Promise<string>;
 export type Endpoint = string | EndpointResolver;

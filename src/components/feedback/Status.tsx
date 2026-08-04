@@ -1,7 +1,8 @@
 "use client";
 import type { CSSProperties } from "react";
+
 import { useUploaderContext } from "../../core/context";
-import type { UploaderState, UploaderError } from "../../types";
+import type { UploaderError, UploaderState } from "../../types";
 
 export interface FastPixStatusProps {
   readonly className?: string;
@@ -15,9 +16,9 @@ export function FastPixStatus({ className, style, labels }: FastPixStatusProps) 
 
   return (
     <span
-      className={["fpx-status", className].filter(Boolean).join(" ")}
+      className={["fastpix-status", className].filter(Boolean).join(" ")}
       style={style}
-      data-fpx-state={state}
+      data-fastpix-state={state}
       role="status"
       aria-live="polite"
     >
@@ -28,16 +29,24 @@ export function FastPixStatus({ className, style, labels }: FastPixStatusProps) 
 
 function defaultLabel(
   state: UploaderState,
-  ctx: { progress: number; file: File | null; error: UploaderError | null }
+  ctx: { progress: number; file: File | null; error: UploaderError | null },
 ): string {
   switch (state) {
-    case "idle":      return "Select a file to upload";
-    case "ready":     return ctx.file ? ctx.file.name : "Ready to upload";
-    case "resolving": return "Preparing…";
-    case "uploading": return `Uploading… ${Math.round(ctx.progress)}%`;
-    case "paused":    return "Paused";
-    case "error":     return ctx.error?.message ?? "Upload failed";
-    case "success":   return "Upload complete";
-    default:          return "";
+    case "idle":
+      return "Select a file to upload";
+    case "ready":
+      return ctx.file ? ctx.file.name : "Ready to upload";
+    case "resolving":
+      return "Preparing…";
+    case "uploading":
+      return `Uploading… ${Math.round(ctx.progress)}%`;
+    case "paused":
+      return "Paused";
+    case "error":
+      return ctx.error?.message ?? "Upload failed";
+    case "success":
+      return "Upload complete";
+    default:
+      return "";
   }
 }
