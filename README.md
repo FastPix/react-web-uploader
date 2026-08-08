@@ -35,6 +35,7 @@ your app ──── upload URL ────▶ <FastPixUploader /> ───�
   - [Import](#import)
   - [Integration](#integration)
   - [Providing the upload URL](#providing-the-upload-url)
+  - [Example project](#example-project)
 - [Lifecycle Events](#lifecycle-events)
 - [Composition](#composition)
 - [Concepts](#concepts)
@@ -111,6 +112,10 @@ In practice you'll create the upload URL once a file is selected. Pass a functio
 ```
 
 > **Note:** The signed URL is created through the [Upload media from device](https://fastpix.com/docs/video-on-demand-api/upload-and-import-videos/direct-upload-video-media) API. Keep that call on your server so your credentials are never exposed to the browser.
+
+### Example project
+
+A minimal, runnable React + Vite example lives in [`example/`](example). Run `npm install && npm run dev` in that folder to try the uploader end to end.
 
 ## Lifecycle Events
 
