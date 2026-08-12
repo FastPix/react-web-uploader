@@ -1,8 +1,24 @@
-# Introduction
+# React file upload component - resumable, chunked uploads with drag-and-drop
+
+[![npm version](https://img.shields.io/npm/v/@fastpix/fp-react-uploader)](https://www.npmjs.com/package/@fastpix/fp-react-uploader)
+[![npm downloads](https://img.shields.io/npm/dm/@fastpix/fp-react-uploader)](https://www.npmjs.com/package/@fastpix/fp-react-uploader)
+[![license](https://img.shields.io/npm/l/@fastpix/fp-react-uploader)](https://github.com/FastPix/react-web-uploader/blob/main/LICENSE)
+[![TypeScript](https://img.shields.io/badge/TypeScript-Ready-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 
 A FastPix React component for resumable uploads, built on the [FastPix resumable web uploads SDK](https://github.com/FastPix/web-uploads-sdk).
 
 `<FastPixUploader />` provides a complete upload experience, including file selection, drag-and-drop, upload progress, and pause, resume, and cancel controls. You can also compose it from individual components to customize the layout. Provide an upload URL, and the component uploads the file in resumable chunks, reports progress, and calls `onSuccess` when the upload completes.
+
+**Works with:** React 18+ · Next.js App Router / RSC · Vite · Create React App · TypeScript · any FastPix signed upload URL
+
+📖 **Docs:** https://fastpix.com/docs/video-on-demand-api/upload-and-import-videos/direct-upload-video-media &nbsp;·&nbsp; 🚀 **Free account:** https://dashboard.fastpix.com
+
+## Why FastPix React Uploader?
+
+- **Drop-in, not a toolkit.** One `<FastPixUploader />` gives you file selection, drag-and-drop, progress, and pause/resume/cancel - no wiring required.
+- **Resumable, chunked uploads.** Large video files upload in configurable chunks and failed chunks retry automatically, so a dropped connection does not restart the whole upload.
+- **Composable or headless.** Compose the individual parts for a custom layout, or use the `useUploader` hook to build your own UI while FastPix handles the upload engine.
+- **Styling without a CSS library.** Theme it with CSS variables or the `appearance` prop; it ships TypeScript types and is React Server Component ready.
 
 ## Key Features
 
@@ -49,7 +65,8 @@ your app ──── upload URL ────▶ <FastPixUploader /> ───�
 - [File access on mobile](#file-access-on-mobile)
 - [Framework and browser support](#framework-and-browser-support)
 - [Accessibility](#accessibility)
-- [Stability](#stability)
+- [Which FastPix upload tool should I use?](#which-fastpix-upload-tool-should-i-use)
+- [FAQ](#faq)
 - [References](#references)
 - [Detailed Usage](#detailed-usage)
 - [License](#license)
@@ -580,6 +597,51 @@ The component guards against this: when a file is selected, it verifies the byte
 - Status text is announced to assistive technology (`role="status"`, `aria-live="polite"`), so screen-reader users hear state and progress changes.
 - All controls - including the drop zone - are real buttons: keyboard focusable, activatable with Enter or Space, and shown with visible focus rings.
 - The `disabled` state is reflected for both pointer and assistive interaction.
+
+## Which FastPix upload tool should I use?
+
+| If you're building with... | Use |
+|---|---|
+| **React** - a drop-in uploader component (this repo) | **react-web-uploader** - `@fastpix/fp-react-uploader` |
+| **Any JavaScript / framework-agnostic** - the headless upload engine | [web-uploads-sdk](https://github.com/FastPix/web-uploads-sdk) - `@fastpix/resumable-uploads` |
+| **Playing** the uploaded video on the web | [web-player-component](https://github.com/FastPix/web-player-component) - `@fastpix/fp-player` |
+
+Browse every SDK and tool in the [FastPix organization](https://github.com/orgs/FastPix/repositories).
+
+## FAQ
+
+**How do I add a resumable file uploader to my React app?**
+Install `@fastpix/fp-react-uploader`, import the stylesheet once, and render `<FastPixUploader endpoint={getSignedUrl} />`. See [Installation](#installation) and [Basic Usage](#basic-usage).
+
+**How do I upload large video files in chunks from the browser?**
+The component uploads in resumable chunks and retries failed chunks automatically. Tune `chunkSize`, `maxFileSize`, and `retryChunkAttempt`. See [Parameters Accepted](#parameters-accepted).
+
+**How do I let users pause and resume an upload?**
+Use the built-in `FastPixPauseButton` / `FastPixResumeButton`, or drive it from a ref with `pause()` / `resume()`. See [Composition](#composition) and [Ref (imperative control)](#ref-imperative-control).
+
+**Does it work with Next.js App Router and React Server Components?**
+Yes. The pieces are client components and render directly inside server components with no extra setup. See [Framework and browser support](#framework-and-browser-support).
+
+**How do I show upload progress?**
+Read the `onProgress` callback (0-100) or drop in `<FastPixTrack showLabel />`. See [Lifecycle Events](#lifecycle-events) and [Components](#components).
+
+**How do I build a fully custom uploader UI?**
+Use the `useUploader` hook - it returns the upload state and controls with no provided markup, so you render your own UI. See [Hooks](#hooks).
+
+**Where does the upload URL come from?**
+Create a signed upload URL on your server with the Upload media from device API, then pass it (or a function that returns it per file) to `endpoint`. See [Prerequisites](#prerequisites).
+
+**How do I restrict file types or maximum size?**
+Set the `accept` and `maxFileSize` props; both the picker and the drop zone enforce them. See [Parameters Accepted](#parameters-accepted).
+
+**Is it written in TypeScript?**
+Yes - it ships TypeScript definitions and exports every prop and state type. See [Types](#types).
+
+**How do I match it to my brand?**
+Set `--fastpix-*` CSS variables or the `appearance` prop (accent color, radius, surfaces, and more) - no styling library needed. See [Appearance](#appearance).
+
+**Why does a file fail to upload on Android?**
+The Photos/Gallery picker can hand the browser a file it cannot read. The component detects this and rejects it via `onFileReject` with `reason: "unreadable"`, telling the user to pick from their file manager instead. See [File access on mobile](#file-access-on-mobile).
 
 ## References
 
