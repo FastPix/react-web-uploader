@@ -1,8 +1,36 @@
-# Introduction
+# React file upload component - resumable, chunked uploads with drag-and-drop
+
+[![npm version](https://img.shields.io/npm/v/@fastpix/fp-react-uploader)](https://www.npmjs.com/package/@fastpix/fp-react-uploader)
+[![npm downloads](https://img.shields.io/npm/dm/@fastpix/fp-react-uploader)](https://www.npmjs.com/package/@fastpix/fp-react-uploader)
+[![license](https://img.shields.io/npm/l/@fastpix/fp-react-uploader)](https://github.com/FastPix/react-web-uploader/blob/main/LICENSE)
+[![TypeScript](https://img.shields.io/badge/TypeScript-Ready-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 
 A FastPix React component for resumable uploads, built on the [FastPix resumable web uploads SDK](https://github.com/FastPix/web-uploads-sdk).
 
 `<FastPixUploader />` provides a complete upload experience, including file selection, drag-and-drop, upload progress, and pause, resume, and cancel controls. You can also compose it from individual components to customize the layout. Provide an upload URL, and the component uploads the file in resumable chunks, reports progress, and calls `onSuccess` when the upload completes.
+
+**Works with:** React 18+ · Next.js App Router / RSC · Vite · Create React App · TypeScript · any FastPix signed upload URL
+
+📖 **Docs:** https://fastpix.com/docs/video-on-demand-api/upload-and-import-videos/direct-upload-video-media &nbsp;·&nbsp; 🚀 **Free account:** https://dashboard.fastpix.com
+
+## Jump to
+
+Skip straight to a section without scrolling:
+
+| Get started | Customize | Reference & help |
+|---|---|---|
+| [Getting started](#getting-started) | [Composition](#composition) | [Parameters accepted](#parameters-accepted) |
+| [Installation](#installation) | [Appearance](#appearance) | [Components](#components) |
+| [Basic usage](#basic-usage) | [Hooks](#hooks) | [Which upload tool?](#which-fastpix-upload-tool-should-i-use) |
+| [Lifecycle events](#lifecycle-events) | [Concepts](#concepts) | [FAQ](#faq) |
+| [Key features](#key-features) | [Types](#types) | [Example app](https://github.com/FastPix/react-web-uploader/tree/main/example) |
+
+## Why FastPix React Uploader?
+
+- **Drop-in, not a toolkit.** One `<FastPixUploader />` gives you file selection, drag-and-drop, progress, and pause/resume/cancel - no wiring required.
+- **Resumable, chunked uploads.** Large video files upload in configurable chunks and failed chunks retry automatically, so a dropped connection does not restart the whole upload.
+- **Composable or headless.** Compose the individual parts for a custom layout, or use the `useUploader` hook to build your own UI while FastPix handles the upload engine.
+- **Styling without a CSS library.** Theme it with CSS variables or the `appearance` prop; it ships TypeScript types and is React Server Component ready.
 
 ## Key Features
 
@@ -14,45 +42,214 @@ A FastPix React component for resumable uploads, built on the [FastPix resumable
 - **Typed** - ships with TypeScript definitions.
 - **Accessible** - status changes are announced to assistive technology, supports keyboard navigation.
 
-## Prerequisites
+## Getting started
 
-### Getting Started with FastPix
+Run the example application to test the FastPix React Uploader.
 
-To use this component, you need a signed upload URL.
-
-To make API requests, you'll need a valid **Access Token** and **Secret Key**. See the [Basic Authentication Guide](https://fastpix.com/docs/getting-started/activate-your-account) for details on retrieving these credentials.
-
-After you have your credentials, use the [Upload media from device](https://fastpix.com/docs/video-on-demand-api/upload-and-import-videos/direct-upload-video-media) API to generate a signed URL. You pass that URL to the component, and it uploads the file in resumable chunks. Creating the upload URL, checking when the media is ready for playback, and rendering the player are handled in your own application.
+Your app creates a signed upload URL on the server, hands it to the component, and the component uploads the file and calls back on success:
 
 ```text
 your app ──── upload URL ────▶ <FastPixUploader /> ──── onSuccess ────▶ your app
 ```
 
-## Table of Contents
+Follow these steps in order:
 
-- [Installation](#installation)
-- [Basic Usage](#basic-usage)
-  - [Import](#import)
-  - [Integration](#integration)
-  - [Providing the upload URL](#providing-the-upload-url)
-  - [Example project](#example-project)
-- [Lifecycle Events](#lifecycle-events)
-- [Composition](#composition)
-- [Concepts](#concepts)
-- [Parameters Accepted](#parameters-accepted)
-  - [Events](#events)
-  - [Ref (imperative control)](#ref-imperative-control)
-- [Components](#components)
-- [Hooks](#hooks)
-- [Appearance](#appearance)
-- [Types](#types)
-- [File access on mobile](#file-access-on-mobile)
-- [Framework and browser support](#framework-and-browser-support)
-- [Accessibility](#accessibility)
-- [Stability](#stability)
-- [References](#references)
-- [Detailed Usage](#detailed-usage)
-- [License](#license)
+1. [Clone the repository](#1-clone-the-repository)
+2. [Open the example project](#2-open-the-example-project)
+3. [Install dependencies](#3-install-dependencies)
+4. [Start the example application](#4-start-the-example-application)
+5. [Generate a FastPix signed upload URL](#5-generate-a-fastpix-signed-upload-url)
+6. [Test the uploader](#6-test-the-uploader)
+7. [Stop the example application](#7-stop-the-example-application)
+
+### Before you begin
+
+Make sure you have:
+
+- Node.js 18 or later.
+- npm.
+- Git.
+- Internet access.
+- A FastPix account.
+- A FastPix Access Token.
+- A FastPix Secret Key.
+
+FastPix uses HTTP Basic Authentication:
+
+| SDK value | FastPix credential |
+|---|---|
+| `username` | Access Token |
+| `password` | Secret Key |
+
+You can obtain your credentials from the FastPix Dashboard. Follow the [Authentication with Basic Auth](https://fastpix.com/docs/getting-started/activate-your-account) guide for information about obtaining your credentials.
+
+> **Security:** Never commit your Access Token or Secret Key to source control. Generate signed upload URLs server-side and keep your Secret Key out of your React application and browser.
+
+## 1. Clone the repository
+
+Clone the FastPix React Uploader repository:
+
+```bash
+git clone https://github.com/FastPix/react-web-uploader.git
+```
+
+Change to the repository directory:
+
+```bash
+cd react-web-uploader
+```
+
+## 2. Open the example project
+
+The repository includes a minimal React + Vite example application.
+
+```bash
+cd example
+```
+
+## 3. Install dependencies
+
+Install the dependencies:
+
+```bash
+npm install
+```
+
+Wait for the installation to complete successfully.
+
+## 4. Start the example application
+
+Start the development server:
+
+```bash
+npm run dev
+```
+
+The terminal displays a local URL similar to:
+
+```text
+Local: http://localhost:5173/
+```
+
+Open the URL in your browser.
+
+If port `5173` is already in use, Vite may provide a different port. Use the URL displayed in your terminal.
+
+## 5. Generate a FastPix signed upload URL
+
+The example application requires a **FastPix signed upload URL** to upload a file.
+
+Generate the signed upload URL using the FastPix **Upload media from device** API.
+
+**5.1 Get your FastPix credentials**
+
+You need the following FastPix credentials:
+
+- Access Token ID
+- Secret Key
+
+Keep both values private. You will use them to authenticate the API request.
+
+**5.2 Send a request to the FastPix API**
+
+For this test, you can use curl from your terminal.
+
+Run:
+
+```bash
+curl -X POST "https://api.fastpix.io/v1/on-demand/upload" \
+  -u "ACCESS_TOKEN_ID:SECRET_KEY" \
+  -H "Content-Type: application/json" \
+  -H "X-Client-Type: web-browser" \
+  -d '{
+    "corsOrigin": "*",
+    "pushMediaSettings": {
+      "accessPolicy": "public",
+      "maxResolution": "1080p",
+      "mediaQuality": "standard"
+    }
+  }'
+```
+
+Replace:
+
+- `ACCESS_TOKEN_ID` with your FastPix Access Token ID.
+- `SECRET_KEY` with your FastPix Secret Key.
+
+For example:
+
+```text
+-u "your-access-token-id:your-secret-key"
+```
+
+Do not share your credentials or include them in client-side code.
+
+**5.3 Verify the API response**
+
+A successful request returns a response similar to:
+
+```json
+{
+  "success": true,
+  "data": {
+    "uploadId": "040454fd-2242-4d42-ad06-0f51eb272083",
+    "trial": true,
+    "status": "waiting",
+    "url": "https://storage.googleapis.com/...",
+    "timeout": 14400
+  }
+}
+```
+
+Verify that `success` is `true` and that the response contains `data.url`.
+
+The `data.url` value is the signed upload URL required by the React uploader.
+
+**5.4 Copy the signed upload URL**
+
+Copy the entire value of `data.url`.
+
+For example:
+
+```text
+https://storage.googleapis.com/fastpix-uploads-asia/...?...&X-Goog-Signature=...
+```
+
+The signed URL includes the authorization information required for the upload, so copy the complete URL, including everything after `?`.
+
+Keep the signed URL private. Treat the signed URL as temporary upload access. Do not publish it, commit it to Git, or include it in your source code. The signed URL expires after the timeout specified by the API response.
+
+## 6. Test the uploader
+
+The example application displays:
+
+> FastPix React Uploader
+
+and prompts you to:
+
+> Paste a FastPix signed upload URL, then pick a file.
+
+To test the uploader:
+
+1. Copy the signed upload URL generated by your server.
+2. Paste the URL into the **FastPix signed upload URL** field.
+3. Select a video file.
+4. Start the upload.
+5. Verify that the upload progresses and completes successfully.
+
+**Do not expose your FastPix Secret Key in the browser or client-side application.**
+
+For more information, see the [Upload media from device](https://fastpix.com/docs/video-on-demand-api/upload-and-import-videos/direct-upload-video-media) API documentation.
+
+## 7. Stop the example application
+
+When you finish testing, return to the terminal and press:
+
+```text
+Ctrl+C
+```
+
+This stops the development server.
 
 ## Installation
 
@@ -115,7 +312,7 @@ In practice you'll create the upload URL once a file is selected. Pass a functio
 
 ### Example project
 
-A minimal, runnable React + Vite example lives in [`example/`](example). Run `npm install && npm run dev` in that folder to try the uploader end to end.
+A minimal, runnable React + Vite example lives in [`example/`](https://github.com/FastPix/react-web-uploader/tree/main/example). Run `npm install && npm run dev` in that folder to try the uploader end to end.
 
 ## Lifecycle Events
 
@@ -158,10 +355,8 @@ import {
   <FastPixDropZone overlay>
     <p>Drag a video here, or click to browse</p>
   </FastPixDropZone>
-
   <FastPixStatus />
   <FastPixTrack showLabel />
-
   <FastPixStartButton />
   <FastPixPauseButton />
   <FastPixResumeButton />
@@ -580,6 +775,51 @@ The component guards against this: when a file is selected, it verifies the byte
 - Status text is announced to assistive technology (`role="status"`, `aria-live="polite"`), so screen-reader users hear state and progress changes.
 - All controls - including the drop zone - are real buttons: keyboard focusable, activatable with Enter or Space, and shown with visible focus rings.
 - The `disabled` state is reflected for both pointer and assistive interaction.
+
+## Which FastPix upload tool should I use?
+
+| If you're building with... | Use |
+|---|---|
+| **React** - a drop-in uploader component (this repo) | **react-web-uploader** - `@fastpix/fp-react-uploader` |
+| **Any JavaScript / framework-agnostic** - the headless upload engine | [web-uploads-sdk](https://github.com/FastPix/web-uploads-sdk) - `@fastpix/resumable-uploads` |
+| **Playing** the uploaded video on the web | [web-player-component](https://github.com/FastPix/web-player-component) - `@fastpix/fp-player` |
+
+Browse every SDK and tool in the [FastPix organization](https://github.com/orgs/FastPix/repositories).
+
+## FAQ
+
+**How do I add a resumable file uploader to my React app?**
+Install `@fastpix/fp-react-uploader`, import the stylesheet once, and render `<FastPixUploader endpoint={getSignedUrl} />`. See [Installation](#installation) and [Basic Usage](#basic-usage).
+
+**How do I upload large video files in chunks from the browser?**
+The component uploads in resumable chunks and retries failed chunks automatically. Tune `chunkSize`, `maxFileSize`, and `retryChunkAttempt`. See [Parameters Accepted](#parameters-accepted).
+
+**How do I let users pause and resume an upload?**
+Use the built-in `FastPixPauseButton` / `FastPixResumeButton`, or drive it from a ref with `pause()` / `resume()`. See [Composition](#composition) and [Ref (imperative control)](#ref-imperative-control).
+
+**Does it work with Next.js App Router and React Server Components?**
+Yes. The pieces are client components and render directly inside server components with no extra setup. See [Framework and browser support](#framework-and-browser-support).
+
+**How do I show upload progress?**
+Read the `onProgress` callback (0-100) or drop in `<FastPixTrack showLabel />`. See [Lifecycle Events](#lifecycle-events) and [Components](#components).
+
+**How do I build a fully custom uploader UI?**
+Use the `useUploader` hook - it returns the upload state and controls with no provided markup, so you render your own UI. See [Hooks](#hooks).
+
+**Where does the upload URL come from?**
+Create a signed upload URL on your server with the Upload media from device API, then pass it (or a function that returns it per file) to `endpoint`. See [Generate a FastPix signed upload URL](#5-generate-a-fastpix-signed-upload-url).
+
+**How do I restrict file types or maximum size?**
+Set the `accept` and `maxFileSize` props; both the picker and the drop zone enforce them. See [Parameters Accepted](#parameters-accepted).
+
+**Is it written in TypeScript?**
+Yes - it ships TypeScript definitions and exports every prop and state type. See [Types](#types).
+
+**How do I match it to my brand?**
+Set `--fastpix-*` CSS variables or the `appearance` prop (accent color, radius, surfaces, and more) - no styling library needed. See [Appearance](#appearance).
+
+**Why does a file fail to upload on Android?**
+The Photos/Gallery picker can hand the browser a file it cannot read. The component detects this and rejects it via `onFileReject` with `reason: "unreadable"`, telling the user to pick from their file manager instead. See [File access on mobile](#file-access-on-mobile).
 
 ## References
 
